@@ -1,0 +1,37 @@
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the NetEscapades.AspNetCore.SecurityHeaders codebase based on best match to current usage at 16/11/2018
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+[*.cs]
+
+#Core editorconfig formatting - indentation
+
+#use soft tabs (spaces) for indentation
+indent_style = space
+
+#Formatting - indentation options
+
+#indent switch case contents.
+csharp_indent_case_contents = true
+#indent switch labels
+csharp_indent_switch_labels = true
+
+#Formatting - new line options
+
+#require braces to be on a new line for types, object_collection, methods, control_blocks, and lambdas (also known as "Allman" style)
+csharp_new_line_before_open_brace = types, object_collection, methods, control_blocks, lambdas
+
+#Formatting - organize using options
+
+#sort System.* using directives alphabetically, and place them before other usings
+dotnet_sort_system_directives_first = true
+
+...
+
+#Style - qualification options
+
+#prefer fields not to be prefaced with this. or Me. in Visual Basic
+dotnet_style_qualification_for_field = false:suggestion
+#prefer methods not to be prefaced with this. or Me. in Visual Basic
+dotnet_style_qualification_for_method = false:suggestion
+#prefer properties not to be prefaced with this. or Me. in Visual Basic
+dotnet_style_qualification_for_property = false:suggestion
