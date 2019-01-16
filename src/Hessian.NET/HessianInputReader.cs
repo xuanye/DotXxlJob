@@ -355,9 +355,9 @@ namespace Hessian.Net
             return ReadInt32();
         }
 
-        public byte? Peek()
+        public byte ReadByte()
         {
-            return  this.Stream.
+            return (byte)Stream.ReadByte();
         }
 
         protected void ReadLeadingByte()

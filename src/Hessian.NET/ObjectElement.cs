@@ -38,6 +38,10 @@ namespace Hessian.Net
         {
             get;
         }
+        public ObjectElement()
+        {
+          
+        }
 
         public ObjectElement(Type objectType, IList<PropertyElement> objectProperties)
         {
@@ -94,6 +98,8 @@ namespace Hessian.Net
             {
                 var className = reader.ReadString();
                 var propertiesCount = reader.ReadInt32();
+
+                
 
                 if (!String.Equals(ClassName, className))
                 {

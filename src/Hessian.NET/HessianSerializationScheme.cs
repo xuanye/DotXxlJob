@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -54,12 +55,11 @@ namespace Hessian.Net
 
             if (IsListType(info))
             {
-                return new ListElement(info);   
+                return new ListElement(type, catalog, factory);
             }
             return BuildSerializationObject(type, catalog, factory);
         }
-
-        
+         
         private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
             ISerializationElement existing;
@@ -123,7 +123,7 @@ namespace Hessian.Net
 
         public static bool IsListType(TypeInfo typeInfo)
         {
-            return typeInfo.IsArray && typeInfo.HasElementType;
+            return typeof(IEnumerable).IsAssignableFrom(typeInfo);          
         }
     }
 }

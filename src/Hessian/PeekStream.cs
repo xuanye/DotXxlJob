@@ -84,7 +84,7 @@ namespace Hessian
             Conditions.CheckLess(offset, buffer.Length, "offset");
             Conditions.CheckGreaterOrEqual(count, 0, "count");
             Conditions.CheckArgument(
-                offset + count < buffer.Length,
+                offset + count <= buffer.Length,
                 "Buffer is not big enough to contain the requested amount of data at the given offset.");
 
             if (count == 0) {

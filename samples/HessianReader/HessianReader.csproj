@@ -16,4 +16,13 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="1547620263.dat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="1547621183.dat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

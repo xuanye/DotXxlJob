@@ -24,29 +24,27 @@ namespace HessianReader
             Console.WriteLine("---------------------------------------------------------------");
 
             
-            
-            
             var serializer = new DataContractHessianSerializer(typeof (RpcRequest));
 
             using (var stream1 = new MemoryStream(myBinary))
             {
-                var ds = new Hessian.Deserializer(stream1);
 
-                Hessian.ClassDef def = ds.ReadClassDefinition();
-                Console.WriteLine(JsonConvert.SerializeObject(def));
-                Console.WriteLine(ds.ReadValue());
-                //Console.WriteLine(ds.ReadLong());
-                //Console.WriteLine(ds.ReadString());
-                //Console.WriteLine(ds.ReadString());
-                //Console.WriteLine(ds.ReadString());
-                //Console.WriteLine(ds.ReadString());
-                //Console.WriteLine(ds.ReadValue());
-                //Console.WriteLine(ds.ReadValue());
-                Console.WriteLine(JsonConvert.SerializeObject(def));
+                var s = new Hessian.Deserializer(stream1);
+                var a  = s.ReadValue();
+                Console.WriteLine(a);
+                a = s.ReadValue();
+                Console.WriteLine(a);
+                Console.WriteLine(JsonConvert.SerializeObject(a));
+                a = s.ReadValue();
+                Console.WriteLine(a);
+                Console.WriteLine(JsonConvert.SerializeObject(a));
+                a = s.ReadValue();
+                Console.WriteLine(a);
+                Console.WriteLine(JsonConvert.SerializeObject(a));
             }
 
             return;
-            
+
             RpcRequest req = new RpcRequest {
                 RequestId = "71565f61-94e8-4dcf-9760-f2fb73a6886a",
                 CreateMillisTime = 1547621183585,
