@@ -24,8 +24,19 @@
         public const byte UnpackedLong = (byte) 'L';// 0x4C;
         public const byte StringNonfinalChunk = 0x52;
         public const byte StringFinalChunk = 0x53;
-        public const byte FixedLengthList = 0x56;
+        public const byte VarList = 0x55;
+        public const byte FixedList = 0x56;
+        public const byte VarListUntyped = 0x57;
+        public const byte FixListUntyped = 0x58;
+
+        public const byte CompactFixListStart = 0x70;
+        public const byte CompactFixListEnd = 0x77;
+        public const byte CompactFixListUntypedStart = 0x78;
+        public const byte CompactFixListUntypedEnd = 0x7F;
+        
         public const byte ClassReference = (byte) 'O';//0x4F
         public const byte InstanceReference = (byte) 'Q'; //0x51;
+        
+        
     }
 }

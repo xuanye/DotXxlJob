@@ -51,10 +51,15 @@ namespace Hessian.Net
                 var serializer = factory.GetSerializer(type);
                 return new ValueElement(type, serializer);
             }
-            
+
+            if (IsListType(info))
+            {
+                return new ListElement(info);   
+            }
             return BuildSerializationObject(type, catalog, factory);
         }
 
+        
         private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
             ISerializationElement existing;
@@ -101,19 +106,24 @@ namespace Hessian.Net
             return element;
         }
 
-        private static bool IsSimpleType(TypeInfo typeinfo)
+        private static bool IsSimpleType(TypeInfo typeInfo)
         {
-            if (typeinfo.IsValueType || typeinfo.IsEnum || typeinfo.IsPrimitive)
+            if (typeInfo.IsValueType || typeInfo.IsEnum || typeInfo.IsPrimitive)
             {
                 return true;
             }
 
-            if (typeof (String) == typeinfo.AsType())
+            if (typeof (String) == typeInfo.AsType())
             {
                 return true;
             }
 
             return false;
+        }
+
+        public static bool IsListType(TypeInfo typeInfo)
+        {
+            return typeInfo.IsArray && typeInfo.HasElementType;
         }
     }
 }

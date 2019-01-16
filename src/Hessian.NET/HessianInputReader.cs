@@ -95,7 +95,7 @@ namespace Hessian.Net
             {
                 return ReadPackedInt64();
             }
-
+           
             if (!LeadingByte.IsUnpackedInt64)
             {
                 throw new HessianSerializerException();
@@ -286,6 +286,48 @@ namespace Hessian.Net
         {
             preamble = ObjectPreamble.None;
         }
+        
+        public ObjectPreamble BeginList()
+        {
+            ReadLeadingByte();
+
+            if (LeadingByte.IsVarList)
+            {
+                preamble = ObjectPreamble.VarList;
+            }
+            else if (LeadingByte.IsFixedList)
+            {
+                preamble = ObjectPreamble.FixList;
+            }
+            else if (LeadingByte.IsVarListUntyped)
+            {
+                preamble = ObjectPreamble.VarListUntyped;
+            }
+            else if (LeadingByte.IsFixListUntyped)
+            {
+                preamble = ObjectPreamble.FixListUntyped;
+            }
+            else if (LeadingByte.IsCompactFixList)
+            {
+                preamble = ObjectPreamble.CompactFixList;
+            }
+            else if (LeadingByte.IsCompactFixListUntyped)
+            {
+                preamble = ObjectPreamble.CompactFixListUntyped;
+            }
+            else
+            {
+                throw new HessianSerializerException();
+            }
+
+            return preamble;
+
+        }
+
+        public void EndList()
+        {
+            preamble = ObjectPreamble.None;
+        }
 
         public void EndClassDefinition()
         {
@@ -313,10 +355,16 @@ namespace Hessian.Net
             return ReadInt32();
         }
 
+        public byte? Peek()
+        {
+            return  this.Stream.
+        }
+
         protected void ReadLeadingByte()
         {
             var data = Stream.ReadByte();
 
+            Console.WriteLine(data.ToString("x2"));
             if (-1 == data)
             {
                 throw new HessianSerializerException();

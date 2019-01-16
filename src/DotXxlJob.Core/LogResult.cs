@@ -1,6 +1,6 @@
 namespace DotXxlJob.Core
 {
-    public class TaskExcutor
+    public class LogResult
     {
         
     }

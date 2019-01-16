@@ -8,4 +8,8 @@
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Hessian.NET\Hessian.NET.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -5,6 +5,13 @@
         None = -1,
         ClassDefinition,
         ObjectReference,
-        InstanceReference
+        InstanceReference,
+        
+        VarList,
+        FixList,
+        VarListUntyped,
+        FixListUntyped,
+        CompactFixList,
+        CompactFixListUntyped
     }
 }

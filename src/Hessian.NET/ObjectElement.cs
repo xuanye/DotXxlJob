@@ -108,6 +108,7 @@ namespace Hessian.Net
                 for (var index = 0; index < propertiesCount; index++)
                 {
                     var propertyName = reader.ReadString();
+                    Console.WriteLine(propertyName);
                     var exists = ObjectProperties.Any(property => String.Equals(property.PropertyName, propertyName));
 
                     if (!exists)
@@ -130,10 +131,12 @@ namespace Hessian.Net
             var instance = Activator.CreateInstance(ObjectType);
 
             context.Instances.Add(instance);
-
+            Console.WriteLine("===========================================");
             foreach (var item in ObjectProperties)
             {
+                Console.WriteLine(item.PropertyName);
                 var value = item.Deserialize(reader, context);
+                Console.WriteLine(value);
                 item.Property.SetValue(instance, value);
             }
 

@@ -71,6 +71,16 @@ namespace Hessian.Net
         public bool IsLongObjectReference => Check(If.Marker.Equals(Marker.ClassReference));
 
         public bool IsInstanceReference => Check(If.Marker.Equals(Marker.InstanceReference));
+        
+        public bool IsVarList  => Check(If.Marker.Equals(Marker.VarList));
+        
+        public bool IsFixedList  => Check(If.Marker.Equals(Marker.FixedList));
+        public bool IsVarListUntyped  => Check(If.Marker.Equals(Marker.VarListUntyped));
+        public bool IsFixListUntyped  => Check(If.Marker.Equals(Marker.FixListUntyped));
+        public bool IsCompactFixList  => Check(If.Marker.Between(Marker.CompactFixListStart).And(Marker.CompactFixListEnd));
+        public bool IsCompactFixListUntyped => Check(If.Marker.Between(Marker.CompactFixListUntypedStart).And(Marker.CompactFixListUntypedEnd));
+        
+     
 
         public void SetData(byte value)
         {
