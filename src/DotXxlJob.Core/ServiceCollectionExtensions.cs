@@ -12,6 +12,7 @@ namespace DotXxlJob.Core
             services.AddSingleton<TaskExecutorFactory>();
             services.AddSingleton<XxlRpcServiceHandler>();
             services.AddSingleton<CallbackTaskQueue>();
+            services.AddSingleton<AdminClient>();
             services.AddSingleton<IExecutorRegistry, ExecutorRegistry>();
             
             return services;

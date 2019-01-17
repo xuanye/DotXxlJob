@@ -13,7 +13,7 @@ namespace Hessian.Net
 
         public bool IsInstanceReference => ObjectPreamble.InstanceReference == preamble;
 
-        protected LeadingByte LeadingByte
+        public LeadingByte LeadingByte
         {
             get;
         }
@@ -355,11 +355,16 @@ namespace Hessian.Net
             return ReadInt32();
         }
 
+        public byte Peek()
+        {
+            byte  value= (byte)this.Stream.ReadByte();
+            this.Stream.Position--;
+            return value;
+        }
         public byte ReadByte()
         {
-            return (byte)Stream.ReadByte();
+            return (byte)this.Stream.ReadByte();
         }
-
         protected void ReadLeadingByte()
         {
             var data = Stream.ReadByte();

@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using DotXxlJob.Core;
 using DotXxlJob.Core.Model;
-using Hessian.Net;
+using Hessian;
 using Newtonsoft.Json;
 
 namespace HessianReader
@@ -11,7 +12,7 @@ namespace HessianReader
     {
         static void Main(string[] args)
         {
-            byte[] myBinary = File.ReadAllBytes("1547621183.dat");
+            byte[] myBinary = File.ReadAllBytes("log.dat");
 
             foreach (var i in myBinary)
             {
@@ -21,39 +22,32 @@ namespace HessianReader
             }
 
             Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine("---------------------{0}------------------------------------------",myBinary.Length);
 
+          
             
-            var serializer = new DataContractHessianSerializer(typeof (RpcRequest));
-
             using (var stream1 = new MemoryStream(myBinary))
             {
-
-                var s = new Hessian.Deserializer(stream1);
-                var a  = s.ReadValue();
-                Console.WriteLine(a);
-                a = s.ReadValue();
-                Console.WriteLine(a);
-                Console.WriteLine(JsonConvert.SerializeObject(a));
-                a = s.ReadValue();
-                Console.WriteLine(a);
-                Console.WriteLine(JsonConvert.SerializeObject(a));
-                a = s.ReadValue();
-                Console.WriteLine(a);
-                Console.WriteLine(JsonConvert.SerializeObject(a));
+                var s1 = HessianSerializer.DeserializeRequest(stream1);
+                Console.WriteLine(JsonConvert.SerializeObject(s1));
             }
+            
+            Console.WriteLine("------------------------------------------------------------");
+            Console.ReadKey();
 
-            return;
 
+            /**
+             *
+             * Console.WriteLine("---------------------------------------------------------------");
             RpcRequest req = new RpcRequest {
                 RequestId = "71565f61-94e8-4dcf-9760-f2fb73a6886a",
                 CreateMillisTime = 1547621183585,
                 AccessToken = "",
                 ClassName = "com.xxl.job.core.biz.ExecutorBiz",
                 MethodName = "run",
-                ParameterTypes = new HessianArrayList {"class com.xxl.job.core.biz.model.TriggerParam"},
-                Version = "null",
-                Parameters = new HessianArrayList()
+                ParameterTypes = new List<object> {new JavaClass{ Name = "com.xxl.job.core.biz.model.TriggerParam"}},
+                Version = null,
+                Parameters = new List<object>()
             };
 
             var p =new TriggerParam {
@@ -71,37 +65,25 @@ namespace HessianReader
                 BroadcastTotal=1
             };
             req.Parameters.Add(p);
-
-            byte[] distArray;
             
-            using (MemoryStream stream = new MemoryStream())
-            {   
-              
+            using (var stream2 = new MemoryStream())
+            {
+                var serializer = new Serializer(stream2);
+                serializer.WriteObject(req);
+                Console.WriteLine("-----------------------------序列化成功---{0}-------------------------------",stream2.Length);
+                stream2.Position = 0;
                 
-                serializer.WriteObject(stream,req);
-                //Console.WriteLine(Environment.NewLine);
-                //Console.WriteLine("---------------------------"+  stream.Length+"------------------------------------");
-                stream.Flush();
-                distArray =stream.ToArray();
+                var s2 = HessianSerializer.DeserializeRequest(stream2);
+                Console.WriteLine(JsonConvert.SerializeObject(s2));
             }
-            foreach (var j in distArray)
-            {
-                Console.Write("0x");
-                Console.Write(j.ToString("x2"));
-                Console.Write(",");
-            }
-            
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("---------------------------------------------------------------");
-            
-            using (var stream2 = new MemoryStream(distArray))
-            {
-             
-                var instance = serializer.ReadObject(stream2) as RpcRequest;
+             * [{"Item1":"requestId","Item2":"71565f61-94e8-4dcf-9760-f2fb73a6886a"},{"Item1":"createMillisTime","Item2":1432957289},{"Item1":"accessToken","Item2":""},{"Item1":"className","Item2":"com.xxl.job.core.biz.ExecutorBiz"},{"Item1":"methodName","Item2":"run"},{"Item1":"version","Item2":null},{"Item1":"parameterT
+ypes","Item2":[{"Name":"java.lang.Class","Fields":["name"]}]},{"Item1":"parameters","Item2":[{"Item1":"name","Item2":"com.xxl.job.core.biz.model.TriggerParam"}]}]
+System.Collections.Generic.List`1[System.Object]
+[{"Name":"com.xxl.job.core.biz.model.TriggerParam","Fields":["jobId","executorHandler","executorParams","executorBlockStrategy","executorTimeout","logId","logDateTim","glueType","glueSource","glueUpdatetime","broadcastIndex","broadcastTotal"]}]
+                     Hessian.HessianObject
+[{"Item1":"jobId","Item2":1},{"Item1":"executorHandler","Item2":"demoJobHandler"},{"Item1":"executorParams","Item2":"111"},{"Item1":"executorBlockStrategy","Item2":"SERIAL_EXECUTION"},{"Item1":"executorTimeout","Item2":0},{"Item1":"logId","Item2":5},{"Item1":"logDateTim","Item2":1432956926},{"Item1":"glueTy
+pe","Item2":"BEAN"},{"Item1":"glueSource","Item2":""},{"Item1":"glueUpdatetime","Item2":-638368258},{"Item1":"broadcastIndex","Item2":0},{"Item1":"broadcastTotal","Item2":1}]
 
-                Console.WriteLine(JsonConvert.SerializeObject(instance));
-            }
-            /**
              * requestId='71565f61-94e8-4dcf-9760-f2fb73a6886a',
              * createMillisTime=1547621183585, 
              * accessToken='',

@@ -6,21 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\src\DotXxlJob.Core\DotXxlJob.Core.csproj" />
       <ProjectReference Include="..\..\src\Hessian\Hessian.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-        <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="1547620263.dat">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="1547621183.dat">
+      <None Update="run.dat">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

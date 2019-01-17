@@ -62,9 +62,7 @@ namespace Hessian.Net
          
         private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            ISerializationElement existing;
-
-            if (catalog.TryGetValue(type, out existing))
+            if (catalog.TryGetValue(type, out var existing))
             {
                 return existing;
             }
@@ -121,7 +119,7 @@ namespace Hessian.Net
             return false;
         }
 
-        public static bool IsListType(TypeInfo typeInfo)
+        private static bool IsListType(TypeInfo typeInfo)
         {
             return typeof(IEnumerable).IsAssignableFrom(typeInfo);          
         }

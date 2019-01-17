@@ -59,9 +59,7 @@ namespace Hessian.Net
         private string ReadTypeName(HessianInputReader reader)
         {
          
-            var tag = reader.ReadByte();
-
-          
+            var tag = reader.Peek();
             
             // A type name is either a string, or an integer reference to a
             // string already read and stored in the type-name ref map.
@@ -74,22 +72,21 @@ namespace Hessian.Net
                 return typeName;
             }
 
-            throw new HessianSerializerException();
-           
+            reader.ReadInt32();
+            return "";
+
         }
 
         #region List
 
         private IList<object> ReadVarList(HessianInputReader reader, HessianSerializationContext context)
         {
-            reader.ReadByte();
             var type = ReadTypeName(reader);
             return ReadListCore(reader, context, type: type);
         }
 
         private IList<object> ReadFixList(HessianInputReader reader, HessianSerializationContext context)
         {
-            reader.ReadByte();
             var type = ReadTypeName(reader);
             var length = reader.ReadInt32();
             return ReadListCore(reader, context, length, type);
@@ -97,20 +94,18 @@ namespace Hessian.Net
 
         private IList<object> ReadVarListUntyped(HessianInputReader reader, HessianSerializationContext context)
         {
-            reader.ReadByte();
             return ReadListCore(reader, context);
         }
 
         private IList<object> ReadFixListUntyped(HessianInputReader reader, HessianSerializationContext context)
         {
-            reader.ReadByte();
             var length = reader.ReadInt32();
             return ReadListCore(reader, context, length);
         }
 
         private IList<object> ReadCompactFixList(HessianInputReader reader, HessianSerializationContext context)
         {
-            var tag = reader.ReadByte();
+            var tag = reader.LeadingByte.Data;
             var length = tag - 0x70;
             var type = ReadTypeName(reader);
             return ReadListCore(reader, context, length, type);
@@ -118,14 +113,14 @@ namespace Hessian.Net
 
         private IList<object> ReadCompactFixListUntyped(HessianInputReader reader, HessianSerializationContext context)
         {
-            var tag = reader.ReadByte();
+            var tag = reader.LeadingByte.Data;
             var length = tag - 0x70;
             return ReadListCore(reader, context, length);
         }
 
         private IList<object> ReadListCore(HessianInputReader reader, HessianSerializationContext context, int? length = null, string type = null)
         {
-            var list = GetListIntance(type, length);
+            var list = GetListInstance(type, length);
 
             //objectRefs.Add(list);
 
@@ -137,7 +132,7 @@ namespace Hessian.Net
             return list;
         }
 
-        private IList<object> GetListIntance(string type, int? length = null)
+        private IList<object> GetListInstance(string type, int? length = null)
         {
             IList<object> list;
 
@@ -156,9 +151,14 @@ namespace Hessian.Net
 
         private void PopulateFixLengthList(HessianInputReader reader, HessianSerializationContext context, IList<object> list, int length)
         {
-            for (var i = 0; i < length; ++i) {
-                //ObjectElement objectElement = new ObjectElement()
-                list.Add(this.ChildSerializationElement.Deserialize(reader,context));
+            var tag = reader.ReadByte(); //0x16
+            
+            for (var i = 0; i < length; ++i)
+            {
+                ObjectElement objectElement = new ObjectElement();
+                var scheme = HessianSerializationScheme.CreateFromType(this.GetType(), this._factory);
+                var obj = scheme.Deserialize(reader, context);
+                list.Add(obj);
             }
         }
 

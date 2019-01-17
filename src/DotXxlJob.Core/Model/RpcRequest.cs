@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core.Model
@@ -40,11 +39,11 @@ namespace DotXxlJob.Core.Model
         public string Version{ get; set; }
         
         [DataMember(Name = "parameterTypes",Order = 7)]
-        public HessianArrayList ParameterTypes{ get; set; }
+        public IList<object> ParameterTypes{ get; set; }
         
         
         [DataMember(Name = "parameters",Order = 8)]
-        public HessianArrayList Parameters{ get; set; }
+        public IList<object> Parameters{ get; set; }
         
        
     }

@@ -10,20 +10,11 @@ namespace Hessian
         private readonly string typeName;
         private readonly IDictionary<string, object> fields; 
 
-        public string TypeName
-        {
-            get { return typeName; }
-        }
+        public string TypeName => typeName;
 
-        public object this[string key]
-        {
-            get { return fields[key]; }
-        }
+        public object this[string key] => fields[key];
 
-        public int Count
-        {
-            get { return fields.Count; }
-        }
+        public int Count => fields.Count;
 
         private HessianObject(string typeName)
         {

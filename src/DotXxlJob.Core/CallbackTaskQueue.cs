@@ -6,7 +6,8 @@ namespace DotXxlJob.Core
     {
         public void Push(CallbackParam callbackParam)
         {
-            throw new System.NotImplementedException();
+            
+            //throw new System.NotImplementedException();
         }
     }
 }

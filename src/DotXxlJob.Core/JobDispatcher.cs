@@ -110,7 +110,7 @@ namespace DotXxlJob.Core
             JobQueue jobQueue = new JobQueue ( executor, this._callbackTaskQueue,this._jobQueueLogger);
             if (RUNNING_QUEUE.TryAdd(triggerParam.JobId, jobQueue))
             {
-                jobQueue.Push(triggerParam);
+                return jobQueue.Push(triggerParam);
             }
             return ReturnT.Failed("add running queue executor error");
         }

@@ -4,6 +4,8 @@ namespace DotXxlJob.Core
 {
     internal static class Constants
     {
+        public const string RpcRequestJavaFullName = "com.xxl.rpc.remoting.net.params.XxlRpcRequest";
+        
         public const string XxlLogsDefaultRootDirectory = "xxl-job-logs";
         public const string HandleLogsDirectory = "HandlerLogs";
         public const string LogFileNameCallContextKey = "XxlJob.LogFileName";

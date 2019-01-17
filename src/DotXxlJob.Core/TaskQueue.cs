@@ -53,7 +53,6 @@ namespace DotXxlJob.Core
            this._cancellationTokenSource?.Cancel();
            this._cancellationTokenSource?.Dispose();
            this._cancellationTokenSource = null;
-           
        }
 
 

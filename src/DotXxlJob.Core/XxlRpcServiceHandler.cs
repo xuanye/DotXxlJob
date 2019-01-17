@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
-using Hessian.Net;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -20,8 +20,6 @@ namespace DotXxlJob.Core
        
         private readonly JobDispatcher _jobDispatcher;
         private readonly ILogger<XxlRpcServiceHandler> _logger;
-        private readonly DataContractHessianSerializer _reqSerializer;
-        private readonly DataContractHessianSerializer _resSerializer;
         private readonly XxlJobExecutorOptions _options;
 
         private readonly ConcurrentDictionary<string, MethodInfo> METHOD_CACHE =
@@ -34,8 +32,7 @@ namespace DotXxlJob.Core
            
             _jobDispatcher = jobDispatcher;
             this._logger = logger;
-            this._reqSerializer = new DataContractHessianSerializer(typeof (RpcRequest));
-            this._resSerializer = new DataContractHessianSerializer(typeof (RpcResponse));
+        
             this._options = optionsAccessor.Value;
             if (this._options == null)
             {
@@ -52,13 +49,10 @@ namespace DotXxlJob.Core
         /// <exception cref="NotImplementedException"></exception>
         public async Task<byte[]> HandlerAsync(Stream reqStream)
         {
-            using (Stream output = File.OpenWrite(DateTime.Now.ToUnixTimeSeconds()+".dat"))
-            {
-                reqStream.CopyTo(output);
-            }
-            
-            var req = _reqSerializer.ReadObject(reqStream) as RpcRequest;
-            var res = new RpcResponse();
+            var req = HessianSerializer.DeserializeRequest(reqStream);
+           
+           
+            var res = new RpcResponse { RequestId = req.RequestId};
             if (!ValidRequest(req, out var error))
             {
                 res.ErrorMsg = error;
@@ -70,7 +64,7 @@ namespace DotXxlJob.Core
           
             using (var outputStream = new MemoryStream())
             {
-                _resSerializer.WriteObject(outputStream,res);
+                HessianSerializer.SerializeResponse(outputStream,res);
                 return outputStream.GetBuffer();
             }
             
@@ -192,6 +186,7 @@ namespace DotXxlJob.Core
         private ReturnT Log(long logDateTime, int logId, int fromLineNum)
         {
             //var logResult = JobLogger.ReadLog(logDateTime, logId, fromLineNum);
+            Console.WriteLine("{0} ---{1} --{2}",logDateTime,logId,fromLineNum);
             return ReturnT.Success(null);
         }
 

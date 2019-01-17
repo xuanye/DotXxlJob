@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using DotXxlJob.Core;
@@ -28,11 +29,21 @@ namespace ASPNetCoreExecutor
             if ("POST".Equals(context.Request.Method, StringComparison.OrdinalIgnoreCase) && 
                 "application/octet-stream".Equals(context.Request.ContentType, StringComparison.OrdinalIgnoreCase))
             {
+                /*
+                using (Stream file = File.Create("./"+DateTime.Now.ToUnixTimeSeconds()+".data"))
+                {
+                    context.Request.Body.CopyTo(file);
+                }
+                
+                return;
+                */
+                
                 var rsp =  await _rpcService.HandlerAsync(context.Request.Body);
 
                 context.Response.StatusCode = (int) HttpStatusCode.OK;
                 context.Response.ContentType = "text/plain;utf-8";
                 await context.Response.Body.WriteAsync(rsp,0,rsp.Length);
+                return;
             }
             
             await _next.Invoke(context);

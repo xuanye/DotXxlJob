@@ -101,12 +101,12 @@ namespace Hessian.Net
 
                 
 
-                if (!String.Equals(ClassName, className))
+                if (!String.Equals(this.ClassName, className))
                 {
                     throw new HessianSerializerException();
                 }
 
-                if (ObjectProperties.Count != propertiesCount)
+                if (this.ObjectProperties.Count != propertiesCount)
                 {
                     throw new HessianSerializerException();
                 }
@@ -114,8 +114,8 @@ namespace Hessian.Net
                 for (var index = 0; index < propertiesCount; index++)
                 {
                     var propertyName = reader.ReadString();
-                    Console.WriteLine(propertyName);
-                    var exists = ObjectProperties.Any(property => String.Equals(property.PropertyName, propertyName));
+                   
+                    var exists = this.ObjectProperties.Any(property => String.Equals(property.PropertyName, propertyName));
 
                     if (!exists)
                     {
@@ -123,7 +123,7 @@ namespace Hessian.Net
                     }
                 }
 
-                context.Classes.Add(ObjectType);
+                context.Classes.Add(this.ObjectType);
 
                 reader.EndClassDefinition();
             }
@@ -134,11 +134,10 @@ namespace Hessian.Net
             }
 
             var number = reader.ReadObjectReference();
-            var instance = Activator.CreateInstance(ObjectType);
+            var instance = Activator.CreateInstance(this.ObjectType);
 
             context.Instances.Add(instance);
-            Console.WriteLine("===========================================");
-            foreach (var item in ObjectProperties)
+            foreach (var item in this.ObjectProperties)
             {
                 Console.WriteLine(item.PropertyName);
                 var value = item.Deserialize(reader, context);
