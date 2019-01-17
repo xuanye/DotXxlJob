@@ -114,25 +114,29 @@ namespace DotXxlJob.Core
                         continue;
                     }
 
-                    RpcResponse res;
+                    RpcResponse res = null;
                     try
                     {
                        res =  HessianSerializer.DeserializeResponse(resStream);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("des");
+                        _logger.LogError(ex,"DeserializeResponse error:"+ex.Message);
+                    }
+
+                    if (res == null)
+                    {
+                     
+                        return ReturnT.Failed("response is nul");
                     }
                     
                    
                     if (res.IsError)
                     {
-                        throw new Exception(res.error);
+                        return ReturnT.Failed(res.ErrorMsg); 
                     }
-                    else
-                    {
-                        return rpcResponse.result as ReturnT;
-                    }
+
+                    return res.Result as ReturnT;
                 }
             }
             throw new Exception("xxl-rpc server address not accessable.");

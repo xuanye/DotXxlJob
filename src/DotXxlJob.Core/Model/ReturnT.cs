@@ -16,8 +16,8 @@ namespace DotXxlJob.Core
 
         public ReturnT(int code, string msg)
         {
-            this.Code = code;
-            this.Msg = msg;
+            Code = code;
+            Msg = msg;
         }
         
         

@@ -18,7 +18,7 @@ namespace DotXxlJob.Core.Model
             if (DateTime.UtcNow.Subtract(LastFailedTime.Value) > Constants.AdminServerReconnectInterval)
                 return true;
 
-            if (FailedTimes < Constants.AdminServerCircuitFaildTimes)
+            if (FailedTimes < Constants.AdminServerCircuitFailedTimes)
                 return true;
 
             return false;

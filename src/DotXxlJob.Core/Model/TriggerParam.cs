@@ -6,7 +6,7 @@ namespace DotXxlJob.Core.Model
     [DataContract(Name = "com.xxl.job.core.biz.model.TriggerParam")]
     public class TriggerParam
     {
-        static readonly long SerialVersionUID = 42L;
+        //static readonly long SerialVersionUID = 42L;
 
         [DataMember(Name = "jobId",Order = 1)]
         public int JobId { get; set; }

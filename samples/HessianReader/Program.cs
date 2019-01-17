@@ -33,9 +33,22 @@ namespace HessianReader
             }
             
             Console.WriteLine("------------------------------------------------------------");
+          
+
+            RpcResponse response = new RpcResponse {
+                RequestId = Guid.NewGuid().ToString("N"), Result = ReturnT.Failed("ABCDEFG")
+            };
+            using (var stream2 = new MemoryStream())
+            {
+                HessianSerializer.SerializeResponse(stream2,response);
+
+                stream2.Position = 0;
+
+                var s2 =HessianSerializer.DeserializeResponse(stream2);
+                Console.WriteLine(JsonConvert.SerializeObject(s2));
+            }
+            Console.WriteLine("------------------------------------------------------------");
             Console.ReadKey();
-
-
             /**
              *
              * Console.WriteLine("---------------------------------------------------------------");
