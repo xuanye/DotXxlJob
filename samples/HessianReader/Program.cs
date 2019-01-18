@@ -12,7 +12,7 @@ namespace HessianReader
     {
         static void Main(string[] args)
         {
-            byte[] myBinary = File.ReadAllBytes("log.dat");
+            byte[] myBinary = File.ReadAllBytes("request.dat");
 
             foreach (var i in myBinary)
             {
@@ -28,12 +28,23 @@ namespace HessianReader
             
             using (var stream1 = new MemoryStream(myBinary))
             {
-                var s1 = HessianSerializer.DeserializeRequest(stream1);
-                Console.WriteLine(JsonConvert.SerializeObject(s1));
+                //var s1 = HessianSerializer.DeserializeRequest(stream1);
+                var s = new Deserializer(stream1);
+                
+
+                while ( stream1.CanRead)
+                {
+                    var o = s.ReadValue();
+                    Console.WriteLine("{0}={1}",o.GetType(),JsonConvert.SerializeObject(o));
+                    Console.WriteLine("------------------------------------------------------------");
+                }
+               
+               
             }
             
             Console.WriteLine("------------------------------------------------------------");
-          
+
+            return;
 
             RpcResponse response = new RpcResponse {
                 RequestId = Guid.NewGuid().ToString("N"), Result = ReturnT.Failed("ABCDEFG")

@@ -10,5 +10,10 @@ namespace DotXxlJob.Core
         }
         
         public string Name { get; }
+        
+        /// <summary>
+        /// set Ignore 
+        /// </summary>
+        public bool Ignore { get; set; }
     }
 }

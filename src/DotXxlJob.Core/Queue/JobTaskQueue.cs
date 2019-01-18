@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using DotXxlJob.Core.Model;
@@ -7,23 +8,28 @@ using Microsoft.Extensions.Logging;
 
 namespace DotXxlJob.Core
 {
-    public class JobQueue
+    public class JobTaskQueue:IDisposable
     {
         private readonly ITaskExecutor _executor;
-        private readonly CallbackTaskQueue _callbackTaskQueue;
-        private readonly ILogger<JobQueue> _logger;
+        private readonly IJobLogger _jobLogger;
+        private readonly ILogger<JobTaskQueue> _logger;
         private readonly ConcurrentQueue<TriggerParam> TASK_QUEUE = new ConcurrentQueue<TriggerParam>();
-        public JobQueue(ITaskExecutor executor,CallbackTaskQueue callbackTaskQueue,ILogger<JobQueue> logger)
+        private readonly ConcurrentDictionary<int, byte> ID_IN_QUEUE = new ConcurrentDictionary<int, byte>();
+        private CancellationTokenSource _cancellationTokenSource;
+        private Task _runTask;
+        public JobTaskQueue(ITaskExecutor executor,IJobLogger jobLogger,ILogger<JobTaskQueue> logger)
         {
-            _executor = executor;
-            _callbackTaskQueue = callbackTaskQueue;
-            _logger = logger;
+            this._executor = executor;
+            this._jobLogger = jobLogger;
+            this._logger = logger;
         }
 
         public ITaskExecutor Executor => this._executor;
 
 
-        private CancellationTokenSource _cancellationTokenSource;
+        public event EventHandler<HandleCallbackParam> CallBack;
+        
+       
 
        /// <summary>
        /// 覆盖之前的队列
@@ -37,12 +43,18 @@ namespace DotXxlJob.Core
             {
                 TASK_QUEUE.TryDequeue(out _);
             }
+            ID_IN_QUEUE.Clear();
 
             return Push(triggerParam);
        }
 
        public ReturnT Push(TriggerParam triggerParam)
        {
+           if(!ID_IN_QUEUE.TryAdd(triggerParam.LogId,0))
+           {
+               _logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+               return ReturnT.Failed("repeat job task!");
+           }
            this.TASK_QUEUE.Enqueue(triggerParam);
            StartTask();
            return ReturnT.SUCCESS;
@@ -53,8 +65,20 @@ namespace DotXxlJob.Core
            this._cancellationTokenSource?.Cancel();
            this._cancellationTokenSource?.Dispose();
            this._cancellationTokenSource = null;
+           
+           //wait for task completed
+           this._runTask?.GetAwaiter().GetResult();
        }
 
+       public void Dispose()
+       {
+           Stop();
+           while (!TASK_QUEUE.IsEmpty)
+           {
+               TASK_QUEUE.TryDequeue(out _);
+           }
+           ID_IN_QUEUE.Clear();
+       }
 
        private void StartTask()
        {
@@ -65,7 +89,7 @@ namespace DotXxlJob.Core
            this._cancellationTokenSource =new CancellationTokenSource();
            CancellationToken ct = _cancellationTokenSource.Token;
            
-           Task.Factory.StartNew(async () =>
+           this._runTask = Task.Factory.StartNew(async () =>
            {
                
                //ct.ThrowIfCancellationRequested();
@@ -84,7 +108,19 @@ namespace DotXxlJob.Core
                       
                        if (TASK_QUEUE.TryDequeue(out triggerParam))
                        {
-                          result = await this._executor.Execute(triggerParam);
+                           if (ID_IN_QUEUE.TryRemove(triggerParam.LogId,out _))
+                           {
+                               this._logger.LogWarning("remove id in queue failed,logId={logId},jobId={jobId}"
+                                   ,triggerParam.LogId,triggerParam.JobId);
+                           }
+                           //set log file;
+                           this._jobLogger.SetLogFile(triggerParam.LogDateTime,triggerParam.LogId);
+                           
+                           this._jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.ExecutorParams);
+                           
+                           result = await this._executor.Execute(triggerParam);
+                           
+                           this._jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
                        }
                        else
                        {
@@ -94,11 +130,12 @@ namespace DotXxlJob.Core
                    catch (Exception ex)
                    {
                        result = ReturnT.Failed("Dequeue Task Failed:"+ex.Message);
+                       this._jobLogger.Log("<br>----------- JobThread Exception:" + ex.Message + "<br>----------- xxl-job job execute end(error) -----------");
                    }
                  
                    if(triggerParam !=null)
                    {
-                       this._callbackTaskQueue.Push(new CallbackParam(triggerParam, result));
+                       CallBack?.Invoke(this,new HandleCallbackParam(triggerParam, result??ReturnT.FAIL));
                    }
                   
                }

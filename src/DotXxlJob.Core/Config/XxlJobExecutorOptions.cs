@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace DotXxlJob.Core.Config
 {
     public class XxlJobExecutorOptions
@@ -5,8 +8,8 @@ namespace DotXxlJob.Core.Config
        
         public string AdminAddresses { get; set; }
 
-      
-        public string AppName { get; set; }
+
+        public string AppName { get; set; } = "DotXxlJob";
 
      
         public string SpecialBindAddress { get; set; }
@@ -17,11 +20,11 @@ namespace DotXxlJob.Core.Config
       
         public string AccessToken { get; set; }
 
-     
-        public string LogPath { get; set; }
 
-       
-        public int LogRetentionDays { get; set; }
+        public string LogPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "./logs");
+
+
+        public int LogRetentionDays { get; set; } = 30;
 
     }
 }

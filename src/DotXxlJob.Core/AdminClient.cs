@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Hessian;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -29,7 +29,7 @@ namespace DotXxlJob.Core
             ,ILogger<AdminClient> logger)
         {
             this._options = optionsAccessor.Value;
-            _clientFactory = clientFactory;
+            this._clientFactory = clientFactory;
             this._logger = logger;
             InitAddress();
         }
@@ -37,7 +37,7 @@ namespace DotXxlJob.Core
         private void InitAddress()
         {
             this._addresses = new List<AddressEntry>();
-            foreach (var item in this._options.AdminAddresses)
+            foreach (var item in this._options.AdminAddresses.Split(';'))
             {
                try
                {
@@ -73,7 +73,7 @@ namespace DotXxlJob.Core
             object parameters)
         {
             var request = new RpcRequest {
-                CreateMillisTime = DateTime.Now.ToUnixTimeSeconds(),
+                CreateMillisTime = DateTime.Now.GetTotalMilliseconds(),
                 AccessToken = this._options.AccessToken,
                 ClassName = "com.xxl.job.core.biz.AdminBiz",
                 MethodName = methodName,
@@ -93,23 +93,23 @@ namespace DotXxlJob.Core
             using (var client = this._clientFactory.CreateClient())
             {
            
-                while (triedTimes++ < _addresses.Count)
+                while (triedTimes++ < this._addresses.Count)
                 {
-                    var address = _addresses[_currentIndex];
-                    _currentIndex = (_currentIndex + 1) % _addresses.Count;
+                    var address = this._addresses[this._currentIndex];
+                    this._currentIndex = (this._currentIndex + 1) % this._addresses.Count;
                     if (!address.CheckAccessable())
                         continue;
     
                     Stream resStream;
                     try
                     {
-                        resStream =await DoPost(client, address, postBuf);
+                        resStream = await DoPost(client, address, postBuf);
                         address.Reset();
                        
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "request admin error.");
+                        this._logger.LogError(ex, "request admin error.");
                         address.SetFail();
                         continue;
                     }
@@ -121,13 +121,13 @@ namespace DotXxlJob.Core
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex,"DeserializeResponse error:"+ex.Message);
+                        this._logger.LogError(ex,"DeserializeResponse error:"+ex.Message);
                     }
 
                     if (res == null)
                     {
                      
-                        return ReturnT.Failed("response is nul");
+                        return ReturnT.Failed("response is null");
                     }
                     
                    
@@ -139,7 +139,7 @@ namespace DotXxlJob.Core
                     return res.Result as ReturnT;
                 }
             }
-            throw new Exception("xxl-rpc server address not accessable.");
+            throw new Exception("xxl-rpc server address not accessible.");
             
             
         }
@@ -149,6 +149,7 @@ namespace DotXxlJob.Core
             var content = new ByteArrayContent(postBuf);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             var responseMessage = await client.PostAsync(address.RequestUri, content);
+         
             responseMessage.EnsureSuccessStatusCode();
             return await responseMessage.Content.ReadAsStreamAsync();
         }

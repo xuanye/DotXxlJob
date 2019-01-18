@@ -5,6 +5,15 @@ namespace DotXxlJob.Core.Model
     [DataContract(Name = "com.xxl.job.core.biz.model.LogResult")]
     public class LogResult
     {
+
+        public LogResult(int fromLine ,int toLine,string content,bool isEnd)
+        {
+            this.FromLineNum = fromLine;
+            this.ToLineNum = toLine;
+            this.LogContent = content;
+            this.IsEnd = isEnd;
+        }
+        
         [DataMember(Name = "fromLineNum",Order = 1)]
         public int FromLineNum { get; set; }
         [DataMember(Name = "toLineNum",Order = 2)]

@@ -12,23 +12,26 @@ namespace DotXxlJob.Core
     {
         private readonly TaskExecutorFactory _executorFactory;
         private readonly CallbackTaskQueue _callbackTaskQueue;
-       
-        private readonly ConcurrentDictionary<int,JobQueue> RUNNING_QUEUE = new ConcurrentDictionary<int, JobQueue>();
+        private readonly IJobLogger _jobLogger;
+
+        private readonly ConcurrentDictionary<int,JobTaskQueue> RUNNING_QUEUE = new ConcurrentDictionary<int, JobTaskQueue>();
 
 
-        private readonly ILogger<JobQueue> _jobQueueLogger;
+        private readonly ILogger<JobTaskQueue> _jobQueueLogger;
         private readonly ILogger<JobDispatcher> _logger;
         public JobDispatcher(
             TaskExecutorFactory executorFactory,
             CallbackTaskQueue callbackTaskQueue,
+            IJobLogger jobLogger,
             ILoggerFactory loggerFactory
             )
         {
             this. _executorFactory = executorFactory;
             this. _callbackTaskQueue = callbackTaskQueue;
-          
+            this._jobLogger = jobLogger;
 
-            this._jobQueueLogger =  loggerFactory.CreateLogger<JobQueue>();
+
+            this._jobQueueLogger =  loggerFactory.CreateLogger<JobTaskQueue>();
             this._logger =  loggerFactory.CreateLogger<JobDispatcher>();
         }
     
@@ -93,7 +96,7 @@ namespace DotXxlJob.Core
 
 
         /// <summary>
-        /// 等待检查
+        /// IdleBeat
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
@@ -103,11 +106,23 @@ namespace DotXxlJob.Core
                 new ReturnT(ReturnT.FAIL_CODE, "job thread is running or has trigger queue.") 
                 : ReturnT.SUCCESS;
         }
-        
+
+        private void TriggerCallback(object sender, HandleCallbackParam callbackParam)
+        {
+            this._callbackTaskQueue.Push(callbackParam);
+        }
       
         private ReturnT PushJobQueue(TriggerParam triggerParam, ITaskExecutor executor)
         { 
-            JobQueue jobQueue = new JobQueue ( executor, this._callbackTaskQueue,this._jobQueueLogger);
+            
+            if (RUNNING_QUEUE.TryGetValue(triggerParam.JobId,out var jobQueue))
+            {
+                return jobQueue.Push(triggerParam);
+            }
+            
+            //NewJobId
+            jobQueue = new JobTaskQueue ( executor,this._jobLogger, this._jobQueueLogger);
+            jobQueue.CallBack += TriggerCallback;
             if (RUNNING_QUEUE.TryAdd(triggerParam.JobId, jobQueue))
             {
                 return jobQueue.Push(triggerParam);
@@ -117,9 +132,16 @@ namespace DotXxlJob.Core
         
         private ReturnT ChangeJobQueue(TriggerParam triggerParam, ITaskExecutor executor)
         {
+           
+            if (RUNNING_QUEUE.TryRemove(triggerParam.JobId, out var oldJobTask))
+            { 
+                oldJobTask.CallBack -= TriggerCallback;
+                oldJobTask.Dispose(); //释放原来的资源
+            }
             
-            JobQueue jobQueue = new JobQueue ( executor, this._callbackTaskQueue,this._jobQueueLogger);
-            if (RUNNING_QUEUE.TryUpdate(triggerParam.JobId, jobQueue, null))
+            JobTaskQueue jobQueue = new JobTaskQueue ( executor,this._jobLogger, this._jobQueueLogger);
+            jobQueue.CallBack += TriggerCallback;
+            if (RUNNING_QUEUE.TryAdd(triggerParam.JobId, jobQueue))
             {
                 return jobQueue.Push(triggerParam);
             }

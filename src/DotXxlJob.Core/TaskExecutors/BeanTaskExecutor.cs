@@ -9,10 +9,12 @@ namespace DotXxlJob.Core.TaskExecutors
     public class BeanTaskExecutor:ITaskExecutor
     {
         private readonly IJobHandlerFactory _handlerFactory;
+        private readonly IJobLogger _jobLogger;
 
-        public BeanTaskExecutor(IJobHandlerFactory handlerFactory)
+        public BeanTaskExecutor(IJobHandlerFactory handlerFactory,IJobLogger jobLogger)
         {
-            _handlerFactory = handlerFactory;
+            this._handlerFactory = handlerFactory;
+            this._jobLogger = jobLogger;
         }
         
         public string GlueType { get; } = Constants.GlueType.BEAN;
@@ -23,12 +25,10 @@ namespace DotXxlJob.Core.TaskExecutors
 
             if (handler == null)
             {
-                
                return Task.FromResult(ReturnT.Failed($"job handler [{triggerParam.ExecutorHandler} not found."));
             }
-
-            return Task.FromResult(ReturnT.Success("OK"));
-            //return handler.Execute(new JobExecuteContext());
+            var context = new JobExecuteContext(this._jobLogger, triggerParam.ExecutorParams);
+            return handler.Execute(context);
         }
     }
 }

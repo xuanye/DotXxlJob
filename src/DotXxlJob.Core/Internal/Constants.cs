@@ -16,7 +16,7 @@ namespace DotXxlJob.Core
 
         public const int MaxCallbackRetryTimes = 10;
         //每次回调最多发送几条记录
-        public const int MaxCallbackRecordsPerRequest = 100;
+        public const int MaxCallbackRecordsPerRequest = 20;
         public static TimeSpan CallbackRetryInterval = TimeSpan.FromSeconds(600);
 
         //Admin集群机器请求默认超时时间
@@ -26,7 +26,7 @@ namespace DotXxlJob.Core
         //Admin集群中的某台机器请求失败多少次后熔断
         public const int AdminServerCircuitFailedTimes = 3;
 
-        public static TimeSpan JobThreadWaitTime = TimeSpan.FromSeconds(90);
+ 
 
         public static class GlueType
         {

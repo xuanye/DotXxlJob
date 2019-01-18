@@ -1,0 +1,72 @@
+------------ 0x43----------------
+ReadClassDefinition
+Hessian.ClassDef={"Name":"com.xxl.rpc.remoting.net.params.XxlRpcRequest","Fields":["requestId","createMillisTime","accessToken","className","methodName","version","parameterTypes","parameters"]}
+------------------------------------------------------------
+------------ 0x60----------------
+ReadObjectCompact
+------------ 0x00----------------
+ReadShortString  requestId
+------------ 0x4c----------------
+ReadLongFull createMillisTime
+------------ 0x00----------------
+ReadShortString accessToken
+------------ 0x00----------------
+ReadShortString className
+------------ 0x08----------------
+ReadShortString methodName
+------------ 0x4e----------------
+ReadNull version
+------------ 0x71----------------
+ReadCompactFixList parameterTypes
+------------ 0x43----------------
+ReadClassDefinition 
+------------ 0x61----------------
+ReadObjectCompact
+------------ 0x0e----------------
+ReadShortString
+Hessian.HessianObject=[{"Item1":"requestId","Item2":""},{"Item1":"createMillisTime","Item2":1547809331509},{"Item1":"accessToken","Item2":""},{"Item1":"className","Item2":""},{"Item1":"methodName","Item2":"callback"}
+,{"Item1":"version","Item2":null},{"Item1":"parameterTypes","Item2":[{"Name":"java.lang.Clas
+s","Fields":["name"]}]},{"Item1":"parameters","Item2":[{"Item1":"name","Item2":"java.util.List"}]}]
+------------------------------------------------------------
+------------ 0x72----------------
+ReadCompactFixList List
+------------ 0x43----------------
+ReadClassDefinition HandleCallbackParam
+------------ 0x62----------------
+ReadObjectCompact  HandleCallbackParam
+------------ 0xcc----------------
+ReadIntegerTwoBytes logId
+------------ 0x4c----------------
+ReadLongFull  logDateTim
+------------ 0x43----------------
+ReadClassDefinition  executeResult
+System.Collections.Generic.List`1[System.Object]=[{"Name":"com.xxl.job.core.biz.model.HandleCallbackParam","Fields":["logId","logDateTim","executeResult"]},[{"Item1":"logId","Item2":1111},{"Item1":"logDateTim","Item2":1547809331507},{"Item1":"executeResult","Item2":{"Name":"com.xxl.job.core.biz.model.Return
+T","Fields":["code","msg","content"]}}]]
+------------------------------------------------------------
+------------ 0x63----------------
+ReadObjectCompact ReturnT
+------------ 0xc8----------------
+ReadIntegerTwoBytes code
+------------ 0x4e----------------
+ReadNull msg
+------------ 0x07----------------
+ReadShortString aaaaaaa
+Hessian.HessianObject=[{"Item1":"code","Item2":200},{"Item1":"msg","Item2":null},{"Item1":"content","Item2":"aaaaaaa"}]
+------------------------------------------------------------
+------------ 0x62----------------
+ReadObjectCompact  HandleCallbackParam
+------------ 0xd7----------------
+ReadIntegerThreeBytes logId
+------------ 0x4c----------------
+ReadLongFull logDateTim
+------------ 0x63----------------
+ReadObjectCompact executeResult
+------------ 0xc8----------------
+ReadIntegerTwoBytes code
+------------ 0x4e----------------
+ReadNull msg
+------------ 0x06----------------
+ReadShortString content
+Hessian.HessianObject=[{"Item1":"logId","Item2":222222},{"Item1":"logDateTim","Item2":1547809331507},{"Item1":"executeResult","Item2":[{"Item1":"code","Item2":200},{"Item1":"msg","Item2":null},{"Item1":"content","Item2":"bbbbbb"}]}]
+------------------------------------------------------------
+

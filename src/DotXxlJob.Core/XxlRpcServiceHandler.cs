@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Hessian;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,7 @@ namespace DotXxlJob.Core
     {
        
         private readonly JobDispatcher _jobDispatcher;
+        private readonly IJobLogger _jobLogger;
         private readonly ILogger<XxlRpcServiceHandler> _logger;
         private readonly XxlJobExecutorOptions _options;
 
@@ -27,10 +29,12 @@ namespace DotXxlJob.Core
             
         public XxlRpcServiceHandler(IOptions<XxlJobExecutorOptions> optionsAccessor,
             JobDispatcher jobDispatcher, 
+            IJobLogger jobLogger,
             ILogger<XxlRpcServiceHandler> logger)
         {
            
-            _jobDispatcher = jobDispatcher;
+            this._jobDispatcher = jobDispatcher;
+            this._jobLogger = jobLogger;
             this._logger = logger;
         
             this._options = optionsAccessor.Value;
@@ -46,20 +50,24 @@ namespace DotXxlJob.Core
         /// </summary>
         /// <param name="reqStream"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<byte[]> HandlerAsync(Stream reqStream)
         {
             var req = HessianSerializer.DeserializeRequest(reqStream);
-           
-           
+            
             var res = new RpcResponse { RequestId = req.RequestId};
+            
             if (!ValidRequest(req, out var error))
             {
+                this._logger.LogWarning("job task request is not valid:{error}",error);
                 res.ErrorMsg = error;
             }
             else
             {
+                this._logger.LogDebug("receive job task ,req.RequestId={requestId},method={methodName}"
+                    ,req.RequestId,req.MethodName);
                 await Invoke(req, res);
+                this._logger.LogDebug("completed receive job task ,req.RequestId={requestId},method={methodName},IsError={IsError}"
+                    ,req.RequestId,req.MethodName,res.IsError);
             }
           
             using (var outputStream = new MemoryStream())
@@ -91,7 +99,7 @@ namespace DotXxlJob.Core
                 return false;
             }
              
-            if (DateTime.UtcNow.Subtract(req.CreateMillisTime.FromUnixTimeMilliseconds()) > Constants.RpcRequestExpireTimeSpan)
+            if (DateTime.UtcNow.Subtract(req.CreateMillisTime.FromMilliseconds()) > Constants.RpcRequestExpireTimeSpan)
             {
                 error =  "request is timeout!";
                 return false;
@@ -120,6 +128,7 @@ namespace DotXxlJob.Core
                 if (method == null)
                 {
                     res.ErrorMsg = $"The method{req.MethodName} is not defined.";
+                    this._logger.LogWarning( $"The method{req.MethodName} is not defined.");
                 }
                 else
                 {
@@ -131,7 +140,8 @@ namespace DotXxlJob.Core
             }
             catch (Exception ex)
             {
-                res.ErrorMsg = ex.ToString();
+                res.ErrorMsg = ex.Message +"\n--------------\n"+ ex.StackTrace;
+                this._logger.LogError(ex,"invoke method error:{0}",ex.Message);
             }
 
             return Task.CompletedTask;
@@ -177,7 +187,7 @@ namespace DotXxlJob.Core
         }
 
         /// <summary>
-        /// TODO:获取执行日志
+        ///  read Log
         /// </summary>
         /// <param name="logDateTime"></param>
         /// <param name="logId"></param>
@@ -185,9 +195,9 @@ namespace DotXxlJob.Core
         /// <returns></returns>
         private ReturnT Log(long logDateTime, int logId, int fromLineNum)
         {
-            //var logResult = JobLogger.ReadLog(logDateTime, logId, fromLineNum);
-            Console.WriteLine("{0} ---{1} --{2}",logDateTime,logId,fromLineNum);
-            return ReturnT.Success(null);
+            var ret =  ReturnT.Success(null);
+            ret.Content = this._jobLogger.ReadLog(logDateTime, logId, fromLineNum);
+            return ret;
         }
 
         /// <summary>

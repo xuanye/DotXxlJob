@@ -5,7 +5,7 @@ namespace Hessian
     /// <summary>
     /// 
     /// </summary>
-    internal static class DateTimeExtension
+    public static class DateTimeExtension
     {
         private const long Era = 62135596800000L;
         private const long Millis = 60000;
@@ -36,7 +36,7 @@ namespace Hessian
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static DateTime FromMinutes(int value)
+        public static DateTime FromMinutes(this int value)
         {
             var ticks = (value * Millis + Era) * 10000;
             return new DateTime(ticks, DateTimeKind.Utc);
@@ -47,7 +47,7 @@ namespace Hessian
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static DateTime FromMilliseconds(long value)
+        public static DateTime FromMilliseconds(this long value)
         {
             var ticks = (value + Era) * 10000;
             return new DateTime(ticks, DateTimeKind.Utc);
