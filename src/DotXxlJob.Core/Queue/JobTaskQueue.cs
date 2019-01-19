@@ -52,9 +52,12 @@ namespace DotXxlJob.Core
        {
            if(!ID_IN_QUEUE.TryAdd(triggerParam.LogId,0))
            {
-               _logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+               this._logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
                return ReturnT.Failed("repeat job task!");
            }
+
+           //this._logger.LogWarning("add job with logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+
            this.TASK_QUEUE.Enqueue(triggerParam);
            StartTask();
            return ReturnT.SUCCESS;
@@ -86,8 +89,8 @@ namespace DotXxlJob.Core
            {
                return; //running
            }
-           this._cancellationTokenSource =new CancellationTokenSource();
-           CancellationToken ct = _cancellationTokenSource.Token;
+           this._cancellationTokenSource = new CancellationTokenSource();
+           var ct = this._cancellationTokenSource.Token;
            
            this._runTask = Task.Factory.StartNew(async () =>
            {
@@ -108,10 +111,10 @@ namespace DotXxlJob.Core
                       
                        if (TASK_QUEUE.TryDequeue(out triggerParam))
                        {
-                           if (ID_IN_QUEUE.TryRemove(triggerParam.LogId,out _))
+                           if (!ID_IN_QUEUE.TryRemove(triggerParam.LogId,out _))
                            {
-                               this._logger.LogWarning("remove id in queue failed,logId={logId},jobId={jobId}"
-                                   ,triggerParam.LogId,triggerParam.JobId);
+                               this._logger.LogWarning("remove queue failed,logId={logId},jobId={jobId},exists={exists}"
+                                   ,triggerParam.LogId,triggerParam.JobId,ID_IN_QUEUE.ContainsKey(triggerParam.LogId));
                            }
                            //set log file;
                            this._jobLogger.SetLogFile(triggerParam.LogDateTime,triggerParam.LogId);

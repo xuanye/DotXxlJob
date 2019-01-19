@@ -1,3 +1,5 @@
+using System;
+using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,7 +18,7 @@ namespace DotXxlJob.Core.DefaultHandlers
         {
             this._httpClientFactory = httpClientFactory;
         }
-        public async override Task<ReturnT> Execute(JobExecuteContext context)
+        public override async Task<ReturnT> Execute(JobExecuteContext context)
         {
             if (string.IsNullOrEmpty(context.JobParameter))
             {
@@ -29,15 +31,35 @@ namespace DotXxlJob.Core.DefaultHandlers
             {
                 return ReturnT.Failed("url format is not valid");
             }
-            
-            using (var client = _httpClientFactory.CreateClient(Constants.DefaultHttpClientName))
-            {
-               var responseMessage =  await client.GetAsync(url);
-            }
-            
-            //判断是否为单URL
             context.JobLogger.Log("Get Request Data:{0}",context.JobParameter);
-            return ReturnT.SUCCESS;
+            using (var client = this._httpClientFactory.CreateClient(Constants.DefaultHttpClientName))
+            {
+                try
+                {
+                    var response =  await client.GetAsync(url);
+                    if (response == null)
+                    {
+                        context.JobLogger.Log("call remote error,response is null");
+                        return ReturnT.Failed("call remote error,response is null");
+                    }
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        context.JobLogger.Log("call remote error,response statusCode ={0}",response.StatusCode);
+                        return ReturnT.Failed("call remote error,response statusCode ="+response.StatusCode);
+                    }
+
+                    string body = await response.Content.ReadAsStringAsync();
+                    context.JobLogger.Log("<br/> call remote success ,response is : <br/> {0}",body);
+                    return ReturnT.SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    context.JobLogger.LogError(ex);
+                    return ReturnT.Failed(ex.Message);
+                }
+              
+            }
         }
     }
     

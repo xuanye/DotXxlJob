@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core.Model
 {
-    [DataContract(Name = "com.xxl.job.core.biz.model.LogResult")]
+    [DataContract(Name = Constants.LogResultJavaFullName)]
     public class LogResult
     {
 

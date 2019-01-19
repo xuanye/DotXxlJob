@@ -36,8 +36,8 @@ Information($"Running target {target} in {configuration} configuration, version 
 
 var artifactsDirectory = Directory("./artifacts");
 
-var projName = "./src/Peach/Peach.csproj";
-
+var projName = "./src/DotXxlJob.Core/DotXxlJob.Core.csproj";
+var hessionProjName = "./src/Hessian/Hessian.csproj";
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ Task("Restore")
    .IsDependentOn("Clean")
    .Does(() =>
    {      
-      DotNetCoreRestore("./Peach.sln");
+      DotNetCoreRestore("./DotXxlJob.sln");
    });
 
 
@@ -105,25 +105,37 @@ Task("Package")
                NoBuild = true,
                ArgumentCustomization = args => args.Append($"/p:PackageVersion={packageVersion}"),
             });
+
+        DotNetCorePack(
+            hessionProjName,
+            new DotNetCorePackSettings()
+            {
+               Configuration = configuration,
+               OutputDirectory = artifactsDirectory,          
+               NoBuild = true,
+               ArgumentCustomization = args => args.Append($"/p:PackageVersion={packageVersion}"),
+            });
     });
 
- 
+
+
 Task("Publish")
 　　.IsDependentOn("Package")
 　　.Does(()=>
 {
 　　 var settings = new DotNetCoreNuGetPushSettings
      {
-         Source = "https://www.nuget.org",
-         ApiKey =  EnvironmentVariable("NUGET_KEY")
+        Source = "https://www.nuget.org",
+        ApiKey =  EnvironmentVariable("NUGET_KEY")
      };
 
       foreach(var file in GetFiles($"{artifactsDirectory}/*.nupkg"))
       {
-         DotNetCoreNuGetPush(file.FullPath, settings);
+        DotNetCoreNuGetPush(file.FullPath, settings);
       }
   
 });
+
 
 
 //////////////////////////////////////////////////////////////////////

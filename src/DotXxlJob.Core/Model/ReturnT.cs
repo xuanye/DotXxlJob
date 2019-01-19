@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core
 {
-    [DataContract(Name = "com.xxl.job.core.biz.model.ReturnT")]
+    [DataContract(Name = Constants.ReturnTJavaFullName)]
     public class ReturnT
     {
         public const int SUCCESS_CODE = 200;

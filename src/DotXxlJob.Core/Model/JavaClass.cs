@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core.Model
 {
-    [DataContract(Name = "java.lang.Class")]
+    [DataContract(Name = Constants.JavaClassFulName)]
     public class JavaClass
     {
         [DataMember(Name = "name",Order = 1)]

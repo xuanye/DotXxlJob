@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using DotXxlJob.Core.Model;
+using DotXxlJob.Core.Queue;
 using Microsoft.Extensions.Logging;
 
 namespace DotXxlJob.Core

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -28,7 +29,10 @@ namespace DotXxlJob.Core
             ,IHttpClientFactory clientFactory
             ,ILogger<AdminClient> logger)
         {
-            this._options = optionsAccessor.Value;
+            
+            Preconditions.CheckNotNull(optionsAccessor?.Value, "XxlJobExecutorOptions");
+            
+            this._options = optionsAccessor?.Value;
             this._clientFactory = clientFactory;
             this._logger = logger;
             InitAddress();
@@ -61,16 +65,16 @@ namespace DotXxlJob.Core
 
         public  Task<ReturnT> Registry(RegistryParam registryParam)
         { 
-            return InvokeRpcService("callback", new List<object> {new JavaClass {Name = Constants.JavaClassFulName}}, registryParam);
+            return InvokeRpcService("registry", new List<object> {new JavaClass {Name = "com.xxl.job.core.biz.model.RegistryParam"}}, registryParam,true);
         }
 
         public  Task<ReturnT> RegistryRemove(RegistryParam registryParam)
         {
-            return InvokeRpcService("callback", new List<object> {new JavaClass {Name = Constants.JavaClassFulName}}, registryParam);
+            return InvokeRpcService("registryRemove", new List<object> {new JavaClass {Name = "com.xxl.job.core.biz.model.RegistryParam"}}, registryParam,true);
         }
 
         private async Task<ReturnT> InvokeRpcService(string methodName, List<object> parameterTypes,
-            object parameters)
+            object parameters,bool polling=false)
         {
             var request = new RpcRequest {
                 RequestId = Guid.NewGuid().ToString("N"),
@@ -86,14 +90,14 @@ namespace DotXxlJob.Core
             {
                HessianSerializer.SerializeRequest(stream,request);
 
-               postBuf =stream.ToArray();
+               postBuf = stream.ToArray();
             }
 
-            int triedTimes = 0;
+            var triedTimes = 0;
+            var retList = new List<ReturnT>();
             
-            using (var client = this._clientFactory.CreateClient("DotXxlJobClient"))
+            using (var client = this._clientFactory.CreateClient(Constants.DefaultHttpClientName))
             {
-           
                 while (triedTimes++ < this._addresses.Count)
                 {
                     var address = this._addresses[this._currentIndex];
@@ -106,42 +110,65 @@ namespace DotXxlJob.Core
                     {
                         resStream = await DoPost(client, address, postBuf);
                         address.Reset();
-                       
                     }
                     catch (Exception ex)
                     {
-                        this._logger.LogError(ex, "request admin error.");
+                        this._logger.LogError(ex, "request admin error.{0}",ex.Message);
                         address.SetFail();
                         continue;
                     }
 
                     RpcResponse res = null;
                     try
-                    {
-                       res =  HessianSerializer.DeserializeResponse(resStream);
+                    { 
+                        /* 
+                       using (StreamReader reader = new StreamReader(resStream))
+                       {
+                           string content  = await reader.ReadToEndAsync();
+                           
+                           this._logger.LogWarning(content);
+                       }
+                       */
+                       res = HessianSerializer.DeserializeResponse(resStream);
+                      
                     }
                     catch (Exception ex)
                     {
-                        this._logger.LogError(ex,"DeserializeResponse error:"+ex.Message);
+                        this._logger.LogError(ex,"DeserializeResponse error:{errorMessage}",ex.Message);
+                        
+                        
                     }
 
                     if (res == null)
                     {
-                     
-                        return ReturnT.Failed("response is null");
+                        retList.Add(ReturnT.Failed("response is null"));
                     }
-                    
-                   
-                    if (res.IsError)
+                    else  if (res.IsError)
                     {
-                        return ReturnT.Failed(res.ErrorMsg); 
+                        retList.Add(ReturnT.Failed(res.ErrorMsg));
+                    }
+                    else if(res.Result is ReturnT ret)
+                    {
+                        retList.Add(ret);
+                    }
+                    else
+                    {
+                        retList.Add(ReturnT.Failed("response is null"));
                     }
 
-                    return res.Result as ReturnT;
+                    if (!polling)
+                    {
+                        return retList[0];
+                    }
+                   
+                }
+
+                if (retList.Count > 0)
+                {
+                    return retList.Last();
                 }
             }
             throw new Exception("xxl-rpc server address not accessible.");
-            
             
         }
 

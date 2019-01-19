@@ -90,7 +90,7 @@ namespace DotXxlJob.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ReadLog error.");
+                this._logger.LogError(ex, "ReadLog error.");
             }
 
             // result
@@ -114,7 +114,7 @@ namespace DotXxlJob.Core
         private string MakeLogFileName(long logDateTime, int logId)
         {
             //log fileName like: logPath/HandlerLogs/yyyy-MM-dd/9999.log
-            return Path.Combine(_options.LogPath, Constants.HandleLogsDirectory,
+            return Path.Combine(this._options.LogPath, Constants.HandleLogsDirectory,
                 logDateTime.FromMilliseconds().ToString("yyyy-MM-dd"), $"{logId}.log");
         }
         private void LogDetail(string logFileName, StackFrame callInfo, string appendLog)
@@ -147,16 +147,16 @@ namespace DotXxlJob.Core
         
         private void CleanOldLogs()
         {
-            if (_options.LogRetentionDays <= 0)
+            if (this._options.LogRetentionDays <= 0)
             {
-                return;
+                this._options.LogRetentionDays = Constants.DefaultLogRetentionDays;
             }
 
             Task.Run(() =>
             {
                 try
                 {
-                    var handlerLogsDir = new DirectoryInfo(Path.Combine(_options.LogPath, Constants.HandleLogsDirectory));
+                    var handlerLogsDir = new DirectoryInfo(Path.Combine(this._options.LogPath, Constants.HandleLogsDirectory));
                     if (!handlerLogsDir.Exists)
                     {
                         return;
@@ -167,7 +167,7 @@ namespace DotXxlJob.Core
                     {
                         if (DateTime.TryParse(dir.Name, out var dirDate))
                         {
-                            if (today.Subtract(dirDate.Date).Days > _options.LogRetentionDays)
+                            if (today.Subtract(dirDate.Date).Days > this._options.LogRetentionDays)
                             {
                                 dir.Delete(true);
                             }
@@ -176,7 +176,7 @@ namespace DotXxlJob.Core
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "CleanOldLogs error.");
+                    this._logger.LogError(ex, "CleanOldLogs error.");
                 }
             });
         }

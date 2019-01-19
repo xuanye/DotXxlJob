@@ -15,26 +15,26 @@ namespace DotXxlJob.Core
         private readonly Dictionary<string, ITaskExecutor> _cache = new Dictionary<string, ITaskExecutor>();
         public TaskExecutorFactory(IServiceProvider provider)
         {
-            _provider = provider;
+            this._provider = provider;
             Initialize();
         }
 
         private void Initialize()
         {
-            var executors =  _provider.GetServices<ITaskExecutor>();
+            var executors =  this._provider.GetServices<ITaskExecutor>();
 
-            if (executors != null && executors.Any())
+            var taskExecutors = executors as ITaskExecutor[] ?? executors.ToArray();
+            if (executors == null || !taskExecutors.Any()) return;
+            
+            foreach (var item in taskExecutors)
             {
-                foreach (var item in executors)
-                {
-                    _cache.Add(item.GlueType,item);
-                }
+                this._cache.Add(item.GlueType,item);
             }
         }
 
         public ITaskExecutor GetTaskExecutor(string glueType)
         {
-            return _cache.TryGetValue(glueType, out var executor) ? executor : null;
+            return this._cache.TryGetValue(glueType, out var executor) ? executor : null;
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core.Model
 {
-    [DataContract(Name = "com.xxl.rpc.remoting.net.params.XxlRpcRequest")]
+    [DataContract(Name = Constants.RpcRequestJavaFullName)]
     public class RpcRequest
     {
         /*

@@ -1,7 +1,13 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace DotXxlJob.Core
 {
     public interface IExecutorRegistry
     {
-        void Start();
+        
+        Task RegistryAsync(CancellationToken cancellationToken);
+
+     
     }
 }

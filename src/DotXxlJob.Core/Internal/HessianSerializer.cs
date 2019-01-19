@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using DotXxlJob.Core.Model;
 using Hessian;
@@ -19,7 +20,7 @@ namespace DotXxlJob.Core
                 {
                     throw  new HessianException($"unknown class :{classDef.Name}");
                 }
-                request = HessianObjectHelper.GetRealObjectValue(deserializer.ReadValue()) as RpcRequest;
+                request = HessianObjectHelper.GetRealObjectValue(deserializer,deserializer.ReadValue()) as RpcRequest;
             }
             catch (EndOfStreamException)
             {
@@ -50,17 +51,22 @@ namespace DotXxlJob.Core
             try
             {
                 var deserializer = new Deserializer(resStream);
-                var classDef = deserializer.ReadValue() as ClassDef; 
+                var classDef = deserializer.ReadValue() as ClassDef;
                 if (!Constants.RpcResponseJavaFullName.Equals(classDef.Name))
                 {
-                    throw  new HessianException($"unknown class :{classDef.Name}");
+                    throw new HessianException($"unknown class :{classDef.Name}");
                 }
-                rsp = HessianObjectHelper.GetRealObjectValue(deserializer.ReadValue()) as RpcResponse;
-                
+
+                rsp = HessianObjectHelper.GetRealObjectValue(deserializer,deserializer.ReadValue()) as RpcResponse;
+
             }
             catch (EndOfStreamException)
             {
                 //没有数据可读了
+            }
+            catch (Exception)
+            {
+                //TODO: do something?
             }
 
             return rsp;

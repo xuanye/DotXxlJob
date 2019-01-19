@@ -64,7 +64,7 @@ namespace DotXxlJob.Core
             TransferObjCache.Add(classAttr.Name,propertyInfos);
         }
 
-        public static object GetRealObjectValue(object value)
+        public static object GetRealObjectValue(Deserializer deserializer,object value)
         {
             if (value == null || IsSimpleType(value.GetType()))
             {
@@ -80,7 +80,7 @@ namespace DotXxlJob.Core
                     {
                         if (properties.TryGetValue(k, out var p))
                         {
-                            p.SetValue(instance,GetRealObjectValue(v));
+                            p.SetValue(instance,GetRealObjectValue(deserializer,v));
                         }
                     }
 
@@ -88,6 +88,11 @@ namespace DotXxlJob.Core
                 }
             }
 
+            if (value is ClassDef)
+            {
+                return GetRealObjectValue(deserializer, deserializer.ReadValue());
+            }
+            
             if (IsListType(value.GetType()))
             {
                 var listData = new List<object>();
@@ -95,11 +100,12 @@ namespace DotXxlJob.Core
                 var cList = value as List<object>;
                 foreach (var cItem in cList)
                 {
-                   listData.Add(GetRealObjectValue(cItem));
+                   listData.Add(GetRealObjectValue(deserializer,cItem));
                 }
 
                 return listData;
             }
+           
             throw new HessianException($"unknown item:{value.GetType()}");
         }
         

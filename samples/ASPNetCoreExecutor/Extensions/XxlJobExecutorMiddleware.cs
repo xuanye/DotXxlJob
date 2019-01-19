@@ -16,10 +16,9 @@ namespace ASPNetCoreExecutor
         private readonly XxlRpcServiceHandler _rpcService;
         public XxlJobExecutorMiddleware(IServiceProvider provider, RequestDelegate next)
         {
-            _provider = provider;
-            _next = next;
-
-            _rpcService = _provider.GetRequiredService<XxlRpcServiceHandler>();
+            this._provider = provider;
+            this._next = next;
+            this._rpcService = _provider.GetRequiredService<XxlRpcServiceHandler>();
         }
 
 

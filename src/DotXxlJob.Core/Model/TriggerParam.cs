@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace DotXxlJob.Core.Model
 {
     
-    [DataContract(Name = "com.xxl.job.core.biz.model.TriggerParam")]
+    [DataContract(Name = Constants.TriggerParamJavaFullName)]
     public class TriggerParam
     {
         //static readonly long SerialVersionUID = 42L;

@@ -1,8 +1,11 @@
 using System;
 using DotXxlJob.Core.Config;
 using DotXxlJob.Core.DefaultHandlers;
+using DotXxlJob.Core.Queue;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace DotXxlJob.Core
 {
@@ -27,23 +30,31 @@ namespace DotXxlJob.Core
         
         public static IServiceCollection AddDefaultXxlJobHandlers(this IServiceCollection services)
         {
-            services.AddSingleton<IJobHandler,HttpJobHandler >();
+            services.AddSingleton<IJobHandler,SimpleHttpJobHandler>();
+            return services;
+        }
+        public static IServiceCollection AddAutoRegistry(this IServiceCollection services)
+        {
+            services.AddSingleton<IExecutorRegistry,ExecutorRegistry>()
+                .AddSingleton<IHostedService,JobsExecuteHostedService>();
             return services;
         }
         
         private static IServiceCollection AddXxlJobExecutorServiceDependency(this IServiceCollection services)
-        {
-           
+        { 
+      
+            //可在外部提前注册对应实现，并替换默认实现
+            services.TryAddSingleton<IJobLogger, JobLogger>();
+            services.TryAddSingleton<IJobHandlerFactory,DefaultJobHandlerFactory >();
+            services.TryAddSingleton<IExecutorRegistry, ExecutorRegistry>();
+            
             services.AddHttpClient("DotXxlJobClient");
-            services.AddSingleton<IJobLogger, JobLogger>();
-            services.AddSingleton<ITaskExecutor, TaskExecutors.BeanTaskExecutor>();
-            services.AddSingleton<IJobHandlerFactory,DefaultJobHandlerFactory >();
             services.AddSingleton<JobDispatcher>();
             services.AddSingleton<TaskExecutorFactory>();
             services.AddSingleton<XxlRpcServiceHandler>();
             services.AddSingleton<CallbackTaskQueue>();
             services.AddSingleton<AdminClient>();
-            services.AddSingleton<IExecutorRegistry, ExecutorRegistry>();
+            services.AddSingleton<ITaskExecutor, TaskExecutors.BeanTaskExecutor>();
             
             return services;
         }

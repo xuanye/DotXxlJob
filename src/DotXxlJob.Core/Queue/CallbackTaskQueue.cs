@@ -8,7 +8,7 @@ using DotXxlJob.Core.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace DotXxlJob.Core
+namespace DotXxlJob.Core.Queue
 {
     public class CallbackTaskQueue:IDisposable
     {
@@ -16,7 +16,7 @@ namespace DotXxlJob.Core
         private readonly IJobLogger _jobLogger;
         private readonly RetryCallbackTaskQueue _retryQueue;
         private readonly ILogger<CallbackTaskQueue> _logger;
-        private readonly ConcurrentQueue<HandleCallbackParam> TASK_QUEUE = new ConcurrentQueue<HandleCallbackParam>();
+        private readonly ConcurrentQueue<HandleCallbackParam> taskQueue = new ConcurrentQueue<HandleCallbackParam>();
 
         private bool _stop;
 
@@ -38,7 +38,7 @@ namespace DotXxlJob.Core
         
         public void Push(HandleCallbackParam callbackParam)
         {
-            TASK_QUEUE.Enqueue(callbackParam);
+            this.taskQueue.Enqueue(callbackParam);
             StartCallBack();
         }
         
@@ -76,7 +76,7 @@ namespace DotXxlJob.Core
         {
             List<HandleCallbackParam> list = new List<HandleCallbackParam>();
             
-            while (list.Count < Constants.MaxCallbackRecordsPerRequest && this.TASK_QUEUE.TryDequeue(out var item))
+            while (list.Count < Constants.MaxCallbackRecordsPerRequest && this.taskQueue.TryDequeue(out var item))
             {
                 list.Add(item);
             }
@@ -104,7 +104,7 @@ namespace DotXxlJob.Core
         {
             foreach (var param in list)
             {
-                this._jobLogger.LogSpecialFile(param.LogDateTime, param.LogId, result.Msg??"Empty");
+                this._jobLogger.LogSpecialFile(param.LogDateTime, param.LogId, result.Msg??"Success");
             }
         }
 
