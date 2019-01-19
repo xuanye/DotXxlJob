@@ -55,29 +55,30 @@ namespace DotXxlJob.Core
 
         public Task<ReturnT> Callback(List<HandleCallbackParam> callbackParamList)
         {
-            return InvokeRpcService("callback", new List<string> {"java.util.List"}, callbackParamList);
+            return InvokeRpcService("callback", new List<object> {new JavaClass {Name = Constants.JavaListFulName}}, callbackParamList);
         }
 
 
         public  Task<ReturnT> Registry(RegistryParam registryParam)
         { 
-            return InvokeRpcService("callback", new List<string> {"java.lang.Class"}, registryParam);
+            return InvokeRpcService("callback", new List<object> {new JavaClass {Name = Constants.JavaClassFulName}}, registryParam);
         }
 
         public  Task<ReturnT> RegistryRemove(RegistryParam registryParam)
         {
-            return InvokeRpcService("callback", new List<string> {"java.lang.Class"}, registryParam);
+            return InvokeRpcService("callback", new List<object> {new JavaClass {Name = Constants.JavaClassFulName}}, registryParam);
         }
 
-        private async Task<ReturnT> InvokeRpcService(string methodName, List<string> parameterTypes,
+        private async Task<ReturnT> InvokeRpcService(string methodName, List<object> parameterTypes,
             object parameters)
         {
             var request = new RpcRequest {
+                RequestId = Guid.NewGuid().ToString("N"),
                 CreateMillisTime = DateTime.Now.GetTotalMilliseconds(),
                 AccessToken = this._options.AccessToken,
                 ClassName = "com.xxl.job.core.biz.AdminBiz",
                 MethodName = methodName,
-                ParameterTypes = parameterTypes.ToList<object>(),
+                ParameterTypes = parameterTypes,
                 Parameters = new List<object> {parameters}
             };
             byte[] postBuf;
@@ -90,14 +91,14 @@ namespace DotXxlJob.Core
 
             int triedTimes = 0;
             
-            using (var client = this._clientFactory.CreateClient())
+            using (var client = this._clientFactory.CreateClient("DotXxlJobClient"))
             {
            
                 while (triedTimes++ < this._addresses.Count)
                 {
                     var address = this._addresses[this._currentIndex];
                     this._currentIndex = (this._currentIndex + 1) % this._addresses.Count;
-                    if (!address.CheckAccessable())
+                    if (!address.CheckAccessible())
                         continue;
     
                     Stream resStream;

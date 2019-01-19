@@ -6,6 +6,8 @@ namespace DotXxlJob.Core
     {
         public const string RpcRequestJavaFullName = "com.xxl.rpc.remoting.net.params.XxlRpcRequest";
         public const string RpcResponseJavaFullName = "com.xxl.rpc.remoting.net.params.XxlRpcResponse";
+        public const string JavaClassFulName = "java.lang.Clas"; 
+        public const string JavaListFulName = "java.util.List"; 
         
         public const string XxlLogsDefaultRootDirectory = "xxl-job-logs";
         public const string HandleLogsDirectory = "HandlerLogs";

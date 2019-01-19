@@ -10,7 +10,7 @@ namespace DotXxlJob.Core.Model
 
         private int FailedTimes { get; set; }
 
-        public bool CheckAccessable()
+        public bool CheckAccessible()
         {
             if (LastFailedTime == null)
                 return true;

@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace DotXxlJob.Core.Model
 {
-    [DataContract(Name = "")]
+    [DataContract(Name = "com.xxl.job.core.biz.model.RegistryParam")]
     public class RegistryParam
     {
         [DataMember(Name = "registGroup",Order = 1)]

@@ -112,6 +112,7 @@ namespace Hessian
                     WriteString("["+GetItemTypeName(item.GetType()));
                 }
                 WriteValue(item);
+                index++;
             }
         }
 
@@ -121,6 +122,11 @@ namespace Hessian
             if (classType != null)
             {
                 return classType.Name;
+            }
+
+            if (IsListType(type.GetTypeInfo()))
+            {
+                return "java.util.List";
             }
 
             return type.Name;

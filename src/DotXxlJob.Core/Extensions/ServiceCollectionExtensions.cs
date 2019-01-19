@@ -1,5 +1,6 @@
 using System;
 using DotXxlJob.Core.Config;
+using DotXxlJob.Core.DefaultHandlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,13 @@ namespace DotXxlJob.Core
             services.Configure(configAction).AddXxlJobExecutorServiceDependency();
             return services;
         }
+        
+        public static IServiceCollection AddDefaultXxlJobHandlers(this IServiceCollection services)
+        {
+            services.AddSingleton<IJobHandler,HttpJobHandler >();
+            return services;
+        }
+        
         private static IServiceCollection AddXxlJobExecutorServiceDependency(this IServiceCollection services)
         {
            

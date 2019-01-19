@@ -12,53 +12,74 @@ namespace HessianReader
     {
         static void Main(string[] args)
         {
-            byte[] myBinary = File.ReadAllBytes("request.dat");
+           /*   */
+           byte[] myBinary = File.ReadAllBytes("run.dat");
 
+            
             foreach (var i in myBinary)
             {
                 Console.Write("0x");
                 Console.Write(i.ToString("x2"));
                 Console.Write(",");
             }
+          
 
             Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("---------------------{0}------------------------------------------",myBinary.Length);
+            Console.WriteLine("---------------------------------------------------------------");
 
-          
+            /* 
+            byte[] myBinary;
+            var callbackParamList = new List<HandleCallbackParam> {
+                new HandleCallbackParam {
+                    LogId = 11,
+                    LogDateTime = 1547819469000L, 
+                    ExecuteResult =new ReturnT { Code = 200,Content ="acd3323",Msg ="1bc" }
+                },
+                new HandleCallbackParam {
+                    LogId = 22, 
+                    LogDateTime = 1547819469000L,
+                    ExecuteResult =new ReturnT { Code = 500,Content ="cac",Msg ="aad" }
+                }
+            };
             
+            var request = new RpcRequest {
+                RequestId ="e24123be4a76417ca6f41f227532b235",
+                CreateMillisTime = 1547819469003L,
+                AccessToken = "",
+                ClassName = "com.xxl.job.core.biz.AdminBiz",
+                MethodName = "callback",
+                ParameterTypes = new List<object> {new JavaClass {Name = "java.util.List"}},
+                Parameters = new List<object> {callbackParamList}
+            };
+          
+            using (var stream = new MemoryStream())
+            {
+                HessianSerializer.SerializeRequest(stream,request);
+
+                myBinary = stream.ToArray();
+            }
+           */
             using (var stream1 = new MemoryStream(myBinary))
             {
-                //var s1 = HessianSerializer.DeserializeRequest(stream1);
+                var s1 = HessianSerializer.DeserializeRequest(stream1);
+                Console.WriteLine("{0}={1}",s1.GetType(),JsonConvert.SerializeObject(s1));
+                /*
                 var s = new Deserializer(stream1);
                 
 
-                while ( stream1.CanRead)
+                while ( s.CanRead())
                 {
                     var o = s.ReadValue();
                     Console.WriteLine("{0}={1}",o.GetType(),JsonConvert.SerializeObject(o));
                     Console.WriteLine("------------------------------------------------------------");
                 }
+                */
                
                
             }
             
             Console.WriteLine("------------------------------------------------------------");
-
-            return;
-
-            RpcResponse response = new RpcResponse {
-                RequestId = Guid.NewGuid().ToString("N"), Result = ReturnT.Failed("ABCDEFG")
-            };
-            using (var stream2 = new MemoryStream())
-            {
-                HessianSerializer.SerializeResponse(stream2,response);
-
-                stream2.Position = 0;
-
-                var s2 =HessianSerializer.DeserializeResponse(stream2);
-                Console.WriteLine(JsonConvert.SerializeObject(s2));
-            }
-            Console.WriteLine("------------------------------------------------------------");
+   
             Console.ReadKey();
             /**
              *

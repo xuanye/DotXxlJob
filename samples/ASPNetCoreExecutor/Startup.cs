@@ -22,12 +22,13 @@ namespace ASPNetCoreExecutor
         {
           
             services.AddXxlJobExecutor(Configuration);
+            services.AddDefaultXxlJobHandlers();// add httpHandler;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,ILoggerFactory loggerFactory, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app,ILoggingBuilder loggerBuilder, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole();
+            loggerBuilder.AddConsole();
             
             if (env.IsDevelopment())
             {
