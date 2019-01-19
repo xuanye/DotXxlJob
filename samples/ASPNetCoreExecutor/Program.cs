@@ -19,6 +19,11 @@ namespace ASPNetCoreExecutor
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging((ctx, builder) =>
+                {
+                    builder.AddConfiguration(ctx.Configuration);
+                    builder.AddConsole();
+                })
                 .UseStartup<Startup>();
     }
 }

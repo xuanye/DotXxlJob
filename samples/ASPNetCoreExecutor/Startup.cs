@@ -23,13 +23,15 @@ namespace ASPNetCoreExecutor
           
             services.AddXxlJobExecutor(Configuration);
             services.AddDefaultXxlJobHandlers();// add httpHandler;
+
+            services.AddSingleton<IJobHandler, DemoJobHandler>(); // 添加自定义的jobHandler
+            
+            services.AddAutoRegistry(); // 自动注册
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,ILoggingBuilder loggerBuilder, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app,IHostingEnvironment env)
         {
-            loggerBuilder.AddConsole();
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
