@@ -47,7 +47,7 @@ namespace DotXxlJob.Core
                 try
                 {
                     var ret = await this._adminClient.Registry(registryParam);
-                    this._logger.LogInformation("registry last result:{0}", ret?.Code);
+                    this._logger.LogDebug("registry last result:{0}", ret?.Code);
                     errorTimes = 0;
                     await Task.Delay(Constants.RegistryInterval, cancellationToken);
                 }

@@ -1,19 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Import Project="../../build/version.props" />
+  <Import Project="../../build/releasenotes.props" />
  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DefineConstants>$(DefineConstants);DOTNETCORE</DefineConstants>
-    <Description>Hession的编解码实现，并不完全哦</Description>
+    <Description>Hessian的编解码实现，并不完全哦</Description>
     <Copyright>Xuanye @ 2018</Copyright>
     <Authors>Xuanye</Authors>
     <AssemblyTitle>Hession DotNet port</AssemblyTitle>
-    <AssemblyName>Hession</AssemblyName>
-    <PackageId>Hession</PackageId>
-    <Version>1.0.0</Version>  
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <PackageTags>Hession,xxl-job,protocol</PackageTags>
-    <PackageReleaseNotes>Hession的编解码实现，并不完全哦</PackageReleaseNotes>
+    <AssemblyName>Hessian</AssemblyName>
+    <PackageId>Hessian</PackageId>
+    <Version>$(HessianPackageVersion)</Version>
+    <PackageTags>Hessian,xxl-job,protocol</PackageTags>
+    <PackageReleaseNotes>
+      $(HessianPackageNotes)
+    </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/xuanye/DotXxlJob</PackageProjectUrl>
     <PackageLicense>https://github.com/xuanye/DotXxlJob/blob/master/LICENSE</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
