@@ -64,7 +64,7 @@ namespace DotXxlJob.Core
             {
                 //没有数据可读了
             }
-            catch (Exception)
+            catch
             {
                 //TODO: do something?
             }

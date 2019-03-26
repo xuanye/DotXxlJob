@@ -47,7 +47,16 @@ namespace DotXxlJob.Core
 
         public void Log(string pattern, params object[] format)
         {
-            var appendLog = string.Format(pattern, format);
+            string appendLog;
+            if (format == null || format.Length == 0)
+            {
+                appendLog = pattern;
+            }
+            else
+            {
+                appendLog = string.Format(pattern, format);
+            }
+
             var callInfo = new StackTrace(true).GetFrame(1);
             LogDetail(GetLogFileName(), callInfo, appendLog);
         }

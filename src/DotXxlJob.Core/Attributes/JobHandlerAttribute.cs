@@ -2,11 +2,12 @@ using System;
 
 namespace DotXxlJob.Core
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class JobHandlerAttribute:Attribute
     {
         public JobHandlerAttribute(string name)
         {
-            this.Name = name;
+            Name = name;
         }
         
         public string Name { get; }
