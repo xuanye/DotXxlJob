@@ -76,6 +76,15 @@ namespace DotXxlJob.Core.Queue
                 }
             }
 
+            try
+            {
+                File.Delete(_backupFile); //删除备份文件
+            }
+
+            catch (Exception ex)
+            {
+                this._logger.LogError(ex, "delete backup file  error:{error}", ex.Message);
+            }
             if (list.Any())
             {
                 foreach (var item in list)
@@ -88,7 +97,7 @@ namespace DotXxlJob.Core.Queue
 
         public void Push(List<HandleCallbackParam> list)
         {
-            if (!list.Any())
+            if (list?.Count == 0)
             {
                 return;
             }

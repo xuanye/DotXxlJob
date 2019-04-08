@@ -89,7 +89,7 @@ namespace DotXxlJob.Core.Queue
             ReturnT result; 
             try
             {
-                result = await this._adminClient.Callback(list);
+                result = await _adminClient.Callback(list);
             }
             catch (Exception ex){
                 this._logger.LogError(ex,"trigger callback error:{error}",ex.Message);
