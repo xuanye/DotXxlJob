@@ -58,6 +58,7 @@ namespace DotXxlJob.Core
                 catch (Exception ex)
                 {
                     errorTimes++;
+                    await Task.Delay(Constants.RegistryInterval, cancellationToken);
                     this._logger.LogError(ex,"registry error:{0},{1} Times",ex.Message,errorTimes);
                 }
             } 
