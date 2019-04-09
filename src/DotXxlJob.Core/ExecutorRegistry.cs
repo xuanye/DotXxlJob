@@ -11,67 +11,65 @@ namespace DotXxlJob.Core
     /// <summary>
     ///  执行器注册注册
     /// </summary>
-    public class ExecutorRegistry:IExecutorRegistry
+    public class ExecutorRegistry : IExecutorRegistry
     {
         private readonly AdminClient _adminClient;
         private readonly XxlJobExecutorOptions _options;
         private readonly ILogger<ExecutorRegistry> _logger;
 
-        public ExecutorRegistry(AdminClient adminClient,IOptions<XxlJobExecutorOptions> optionsAccessor,ILogger<ExecutorRegistry> logger)
+        public ExecutorRegistry(AdminClient adminClient, IOptions<XxlJobExecutorOptions> optionsAccessor, ILogger<ExecutorRegistry> logger)
         {
             Preconditions.CheckNotNull(optionsAccessor, "XxlJobExecutorOptions");
             Preconditions.CheckNotNull(optionsAccessor.Value, "XxlJobExecutorOptions");
-            this._adminClient = adminClient;
-            this._options = optionsAccessor.Value;
-            if (string.IsNullOrEmpty(this._options.SpecialBindAddress))
+            _adminClient = adminClient;
+            _options = optionsAccessor.Value;
+            if (string.IsNullOrEmpty(_options.SpecialBindAddress))
             {
-                this._options.SpecialBindAddress = IPUtility.GetLocalIntranetIP().MapToIPv4().ToString();
+                _options.SpecialBindAddress = IPUtility.GetLocalIntranetIP().MapToIPv4().ToString();
             }
-            this._logger = logger;
+            _logger = logger;
         }
-        
+
         public async Task RegistryAsync(CancellationToken cancellationToken)
         {
             var registryParam = new RegistryParam {
                 RegistryGroup = "EXECUTOR",
-                RegistryKey = this._options.AppName,
-                RegistryValue = $"{this._options.SpecialBindAddress}:{this._options.Port}"
+                RegistryKey = _options.AppName,
+                RegistryValue = $"{_options.SpecialBindAddress}:{_options.Port}"
             };
 
-            this._logger.LogInformation(">>>>>>>> start registry to admin <<<<<<<<");
+            _logger.LogInformation(">>>>>>>> start registry to admin <<<<<<<<");
 
             var errorTimes = 0;
-            
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    var ret = await this._adminClient.Registry(registryParam);
-                    this._logger.LogDebug("registry last result:{0}", ret?.Code);
+                    var ret = await _adminClient.Registry(registryParam);
+                    _logger.LogDebug("registry last result:{0}", ret?.Code);
                     errorTimes = 0;
                     await Task.Delay(Constants.RegistryInterval, cancellationToken);
                 }
                 catch (TaskCanceledException)
                 {
-                    this._logger.LogInformation(">>>>> Application Stopping....<<<<<");
+                    _logger.LogInformation(">>>>> Application Stopping....<<<<<");
                 }
                 catch (Exception ex)
                 {
                     errorTimes++;
                     await Task.Delay(Constants.RegistryInterval, cancellationToken);
-                    this._logger.LogError(ex,"registry error:{0},{1} Times",ex.Message,errorTimes);
+                    _logger.LogError(ex, "registry error:{0},{1} Times", ex.Message, errorTimes);
                 }
-            } 
-            
-            this._logger.LogInformation(">>>>>>>> end registry to admin <<<<<<<<");
-            
-            this._logger.LogInformation(">>>>>>>> start remove registry to admin <<<<<<<<");
-            
+            }
+
+            _logger.LogInformation(">>>>>>>> end registry to admin <<<<<<<<");
+
+            _logger.LogInformation(">>>>>>>> start remove registry to admin <<<<<<<<");
+
             var removeRet = await this._adminClient.RegistryRemove(registryParam);
-            this._logger.LogInformation("remove registry last result:{0}",removeRet?.Code);
-            this._logger.LogInformation(">>>>>>>> end remove registry to admin <<<<<<<<");
+            _logger.LogInformation("remove registry last result:{0}", removeRet?.Code);
+            _logger.LogInformation(">>>>>>>> end remove registry to admin <<<<<<<<");
         }
-       
-        
     }
 }

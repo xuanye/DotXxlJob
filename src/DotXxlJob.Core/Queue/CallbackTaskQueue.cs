@@ -26,48 +26,49 @@ namespace DotXxlJob.Core.Queue
         public CallbackTaskQueue(AdminClient adminClient,IJobLogger jobLogger,IOptions<XxlJobExecutorOptions> optionsAccessor
             , ILoggerFactory loggerFactory)
         {
-            this._adminClient = adminClient;
-            this._jobLogger = jobLogger;
+            _adminClient = adminClient;
+            _jobLogger = jobLogger;
 
-            this._retryQueue = new RetryCallbackTaskQueue(optionsAccessor.Value.LogPath,
+            _retryQueue = new RetryCallbackTaskQueue(optionsAccessor.Value.LogPath,
                 Push,
                 loggerFactory.CreateLogger<RetryCallbackTaskQueue>());
             
-            this._logger = loggerFactory.CreateLogger<CallbackTaskQueue>();
+            _logger = loggerFactory.CreateLogger<CallbackTaskQueue>();
         }
         
         public void Push(HandleCallbackParam callbackParam)
         {
-            this.taskQueue.Enqueue(callbackParam);
+            taskQueue.Enqueue(callbackParam);
             StartCallBack();
         }
         
         
         public void Dispose()
         {
-            this._stop = true;
-            this._retryQueue.Dispose();
-            this._runTask?.GetAwaiter().GetResult();
+            _stop = true;
+            _retryQueue.Dispose();
+            _runTask?.GetAwaiter().GetResult();
         }
 
 
         private void StartCallBack()
         {
-            if ( this._isRunning)
+            if ( _isRunning)
             {
                 return;
             }
             
-            this._runTask = Task.Run(async () =>
+            _runTask = Task.Run(async () =>
             {
-                this._logger.LogDebug("start to callback");
-                this._isRunning = true;
-                while (!this._stop)
+                _logger.LogDebug("start to callback");
+                _isRunning = true;
+                while (!_stop)
                 {
-                   await DoCallBack();
+                    await DoCallBack();
+                    await Task.Delay(TimeSpan.FromSeconds(3));
                 }
-                this._logger.LogDebug("end to callback");
-                this._isRunning = false;
+                _logger.LogDebug("end to callback");
+                _isRunning = false;
             });
            
         }
@@ -76,12 +77,12 @@ namespace DotXxlJob.Core.Queue
         {
             List<HandleCallbackParam> list = new List<HandleCallbackParam>();
             
-            while (list.Count < Constants.MaxCallbackRecordsPerRequest && this.taskQueue.TryDequeue(out var item))
+            while (list.Count < Constants.MaxCallbackRecordsPerRequest && taskQueue.TryDequeue(out var item))
             {
                 list.Add(item);
             }
 
-            if (!list.Any())
+            if (list.Count == 0)
             {
                 return;
             }
@@ -92,9 +93,9 @@ namespace DotXxlJob.Core.Queue
                 result = await _adminClient.Callback(list);
             }
             catch (Exception ex){
-                this._logger.LogError(ex,"trigger callback error:{error}",ex.Message);
+                _logger.LogError(ex,"trigger callback error:{error}",ex.Message);
                 result = ReturnT.Failed(ex.Message);
-                this._retryQueue.Push(list);
+                _retryQueue.Push(list);
             }
 
             LogCallBackResult(result, list);
@@ -104,7 +105,7 @@ namespace DotXxlJob.Core.Queue
         {
             foreach (var param in list)
             {
-                this._jobLogger.LogSpecialFile(param.LogDateTime, param.LogId, result.Msg??"Success");
+                _jobLogger.LogSpecialFile(param.LogDateTime, param.LogId, result.Msg??"Success");
             }
         }
 

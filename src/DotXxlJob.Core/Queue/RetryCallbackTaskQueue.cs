@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,9 +22,9 @@ namespace DotXxlJob.Core.Queue
         public RetryCallbackTaskQueue(string backupPath,Action<HandleCallbackParam> actionDoCallback,ILogger<RetryCallbackTaskQueue> logger)
         {
             
-            this._actionDoCallback = actionDoCallback;
-            this._logger = logger;
-            this._backupFile = Path.Combine(backupPath, Constants.XxlJobRetryLogsFile);
+            _actionDoCallback = actionDoCallback;
+            _logger = logger;
+            _backupFile = Path.Combine(backupPath, Constants.XxlJobRetryLogsFile);
             var dir = Path.GetDirectoryName(backupPath);
             if (!Directory.Exists(dir))
             {
@@ -37,9 +36,9 @@ namespace DotXxlJob.Core.Queue
 
         private void StartQueue()
         {
-            this._cancellation = new CancellationTokenSource();
+            _cancellation = new CancellationTokenSource();
             var stopToken = this._cancellation.Token;
-            this._runTask = Task.Factory.StartNew(async () =>
+            _runTask = Task.Factory.StartNew(async () =>
             {
                 while (!stopToken.IsCancellationRequested)
                 {
@@ -54,7 +53,7 @@ namespace DotXxlJob.Core.Queue
         {
             var list = new List<HandleCallbackParam>();
 
-            if (!File.Exists(this._backupFile))
+            if (!File.Exists(_backupFile))
             {
                 return;
             }
@@ -70,7 +69,7 @@ namespace DotXxlJob.Core.Queue
                     }
                     catch(Exception ex)
                     {
-                        this._logger.LogError(ex,"read backup file  error:{error}",ex.Message);
+                        _logger.LogError(ex,"read backup file  error:{error}",ex.Message);
                     }
                    
                 }
@@ -83,13 +82,13 @@ namespace DotXxlJob.Core.Queue
 
             catch (Exception ex)
             {
-                this._logger.LogError(ex, "delete backup file  error:{error}", ex.Message);
+                _logger.LogError(ex, "delete backup file  error:{error}", ex.Message);
             }
-            if (list.Any())
+            if (list.Count > 0)
             {
                 foreach (var item in list)
                 {
-                    this._actionDoCallback(item);
+                    _actionDoCallback(item);
                 }
             }
             

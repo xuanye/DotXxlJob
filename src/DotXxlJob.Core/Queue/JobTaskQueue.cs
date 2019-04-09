@@ -52,7 +52,7 @@ namespace DotXxlJob.Core
        {
            if(!ID_IN_QUEUE.TryAdd(triggerParam.LogId,0))
            {
-               this._logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
+               _logger.LogWarning("repeat job task,logId={logId},jobId={jobId}",triggerParam.LogId,triggerParam.JobId);
                return ReturnT.Failed("repeat job task!");
            }
 
@@ -65,12 +65,12 @@ namespace DotXxlJob.Core
 
        public void Stop()
        {
-           this._cancellationTokenSource?.Cancel();
-           this._cancellationTokenSource?.Dispose();
-           this._cancellationTokenSource = null;
+           _cancellationTokenSource?.Cancel();
+           _cancellationTokenSource?.Dispose();
+           _cancellationTokenSource = null;
            
            //wait for task completed
-           this._runTask?.GetAwaiter().GetResult();
+           _runTask?.GetAwaiter().GetResult();
        }
 
        public void Dispose()
@@ -85,14 +85,14 @@ namespace DotXxlJob.Core
 
        private void StartTask()
        {
-           if (this._cancellationTokenSource != null )
+           if (_cancellationTokenSource != null )
            {
                return; //running
            }
-           this._cancellationTokenSource = new CancellationTokenSource();
-           var ct = this._cancellationTokenSource.Token;
+           _cancellationTokenSource = new CancellationTokenSource();
+           var ct = _cancellationTokenSource.Token;
            
-           this._runTask = Task.Factory.StartNew(async () =>
+           _runTask = Task.Factory.StartNew(async () =>
            {
                
                //ct.ThrowIfCancellationRequested();
@@ -101,6 +101,7 @@ namespace DotXxlJob.Core
                {
                    if (TASK_QUEUE.IsEmpty)
                    {
+                       //_logger.LogInformation("task queue is empty!");
                        break;
                    }
 
@@ -113,27 +114,27 @@ namespace DotXxlJob.Core
                        {
                            if (!ID_IN_QUEUE.TryRemove(triggerParam.LogId,out _))
                            {
-                               this._logger.LogWarning("remove queue failed,logId={logId},jobId={jobId},exists={exists}"
+                               _logger.LogWarning("remove queue failed,logId={logId},jobId={jobId},exists={exists}"
                                    ,triggerParam.LogId,triggerParam.JobId,ID_IN_QUEUE.ContainsKey(triggerParam.LogId));
                            }
                            //set log file;
-                           this._jobLogger.SetLogFile(triggerParam.LogDateTime,triggerParam.LogId);
+                           _jobLogger.SetLogFile(triggerParam.LogDateTime,triggerParam.LogId);
                            
-                           this._jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.ExecutorParams);
+                           _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.ExecutorParams);
                            
-                           result = await this._executor.Execute(triggerParam);
+                           result = await _executor.Execute(triggerParam);
                            
-                           this._jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
+                           _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
                        }
                        else
                        {
-                           this._logger.LogWarning("Dequeue Task Failed");
+                           _logger.LogWarning("Dequeue Task Failed");
                        }
                    }
                    catch (Exception ex)
                    {
                        result = ReturnT.Failed("Dequeue Task Failed:"+ex.Message);
-                       this._jobLogger.Log("<br>----------- JobThread Exception:" + ex.Message + "<br>----------- xxl-job job execute end(error) -----------");
+                       _jobLogger.Log("<br>----------- JobThread Exception:" + ex.Message + "<br>----------- xxl-job job execute end(error) -----------");
                    }
                  
                    if(triggerParam !=null)
@@ -144,10 +145,10 @@ namespace DotXxlJob.Core
                }
 
               
-               this._cancellationTokenSource.Dispose();
-               this._cancellationTokenSource = null;
+               _cancellationTokenSource.Dispose();
+               _cancellationTokenSource = null;
 
-           }, this._cancellationTokenSource.Token);
+           }, _cancellationTokenSource.Token);
            
           
        }
