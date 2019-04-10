@@ -22,12 +22,16 @@ namespace DotXxlJob.Core.Queue
 
         private bool _isRunning;
 
+        private int _callbackInterval;
+
         private Task _runTask;
         public CallbackTaskQueue(AdminClient adminClient,IJobLogger jobLogger,IOptions<XxlJobExecutorOptions> optionsAccessor
             , ILoggerFactory loggerFactory)
         {
             _adminClient = adminClient;
             _jobLogger = jobLogger;
+
+            _callbackInterval = optionsAccessor.Value.CallBackInterval;
 
             _retryQueue = new RetryCallbackTaskQueue(optionsAccessor.Value.LogPath,
                 Push,
@@ -65,7 +69,10 @@ namespace DotXxlJob.Core.Queue
                 while (!_stop)
                 {
                     await DoCallBack();
-                    await Task.Delay(TimeSpan.FromSeconds(3));
+                    if (taskQueue.IsEmpty)
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(_callbackInterval));
+                    }                    
                 }
                 _logger.LogDebug("end to callback");
                 _isRunning = false;
@@ -77,20 +84,17 @@ namespace DotXxlJob.Core.Queue
         {
             List<HandleCallbackParam> list = new List<HandleCallbackParam>();
             
-            while (list.Count < Constants.MaxCallbackRecordsPerRequest && taskQueue.TryDequeue(out var item))
-            {
-                list.Add(item);
-            }
-
-            if (list.Count == 0)
+            if(!taskQueue.TryDequeue(out var item))
             {
                 return;
             }
 
-            ReturnT result; 
+            list.Add(item);
+
+            ReturnT result;
             try
             {
-                result = await _adminClient.Callback(list);
+                result = await _adminClient.Callback(list).ConfigureAwait(false);
             }
             catch (Exception ex){
                 _logger.LogError(ex,"trigger callback error:{error}",ex.Message);

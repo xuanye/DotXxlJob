@@ -52,5 +52,8 @@ namespace DotXxlJob.Core.Config
         /// </summary>
         public int LogRetentionDays { get; set; } = 30;
 
+
+        public int CallBackInterval { get; set; } = 500; //回调时间间隔 500毫秒
+
     }
 }

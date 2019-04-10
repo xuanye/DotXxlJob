@@ -10,7 +10,6 @@ namespace DotXxlJob.Core
 {
     public class JobTaskQueue:IDisposable
     {
-        private readonly ITaskExecutor _executor;
         private readonly IJobLogger _jobLogger;
         private readonly ILogger<JobTaskQueue> _logger;
         private readonly ConcurrentQueue<TriggerParam> TASK_QUEUE = new ConcurrentQueue<TriggerParam>();
@@ -19,12 +18,12 @@ namespace DotXxlJob.Core
         private Task _runTask;
         public JobTaskQueue(ITaskExecutor executor,IJobLogger jobLogger,ILogger<JobTaskQueue> logger)
         {
-            this._executor = executor;
+            this.Executor = executor;
             this._jobLogger = jobLogger;
             this._logger = logger;
         }
 
-        public ITaskExecutor Executor => this._executor;
+        public ITaskExecutor Executor { get; }
 
 
         public event EventHandler<HandleCallbackParam> CallBack;
@@ -122,7 +121,7 @@ namespace DotXxlJob.Core
                            
                            _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}" ,triggerParam.ExecutorParams);
                            
-                           result = await _executor.Execute(triggerParam);
+                           result = await Executor.Execute(triggerParam);
                            
                            _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
                        }
