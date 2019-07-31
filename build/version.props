@@ -1,0 +1,6 @@
+<Project>
+	<PropertyGroup>
+		<DotXxlJobPackageVersion>1.0.8</DotXxlJobPackageVersion>	
+		<HessianPackageVersion>1.0.1</HessianPackageVersion>		
+	</PropertyGroup>
+</Project>

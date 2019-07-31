@@ -1,0 +1,10 @@
+<Project>
+	<PropertyGroup>
+		<DotXxlJobPackageNotes>
+		1. 修复回调一次过多的问题
+		</DotXxlJobPackageNotes> 
+		<HessianPackageNotes>
+		1. 实现基本的Hessian协议
+		</HessianPackageNotes> 
+	</PropertyGroup>
+</Project>

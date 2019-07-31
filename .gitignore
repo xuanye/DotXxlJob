@@ -56,7 +56,6 @@ _ReSharper*
 _NCrunch_*
 
 artifacts/
-build/
 # NuGet Packages Directory
 packages
 
