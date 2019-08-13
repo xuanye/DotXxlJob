@@ -22,7 +22,7 @@ xxl-job的dotnet core 执行器实现，支持XXL-JOB 2.0+
 
 ### 3.1 在AspNetCore中使用
 
-1. 生命一个AspNet的Middleware中间件,并扩展ApplicationBuilder，本质是拦截Post请求，解析Body中的流信息
+1. 声明一个AspNet的Middleware中间件,并扩展ApplicationBuilder，本质是拦截Post请求，解析Body中的流信息
 
 ```
 public class XxlJobExecutorMiddleware
