@@ -161,8 +161,6 @@ XXL-JOB内置的RPC是使用Hessian协议，这个有点坑。很多都是java�
 有任何问题，可Issue反馈 ,最后感谢 xxl-job
 
 
-如果觉得对你有帮助，可以请我吃包肥仔快乐薯片
-![](http://ww1.sinaimg.cn/large/697065c1gy1fzc2pfj071j207s09swfg.jpg)  ![](http://ww1.sinaimg.cn/large/697065c1gy1fzc2popzirj208h0audgp.jpg)
 
   [1]: http://www.xuxueli.com/xxl-job
   [2]: https://github.com/yuniansheng/xxl-job-dotnet
