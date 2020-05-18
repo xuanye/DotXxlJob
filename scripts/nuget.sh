@@ -13,6 +13,6 @@ mkdir -p $artifactsFolder
 
 dotnet build ./src/DotXxlJob.Core/DotXxlJob.Core.csproj -c Release
 
-dotnet pack ./src/DotXxlJob.Core/DotXxlJob.Core.csproj -c Release -o ../../$artifactsFolder
+dotnet pack ./src/DotXxlJob.Core/DotXxlJob.Core.csproj -c Release -o $artifactsFolder
 
-dotnet nuget push ./$artifactsFolder/DotXxlJob.Core.*.nupkg -k $NUGET_KEY -s https://www.nuget.org
+dotnet nuget push $artifactsFolder/DotXxlJob.Core.*.nupkg -k $NUGET_KEY -s https://www.nuget.org

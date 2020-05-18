@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DotXxlJob.Core.Config;
+using DotXxlJob.Core.Extensions;
 using DotXxlJob.Core.Model;
-using Hessian;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Hessian
+namespace DotXxlJob.Core.Extensions
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static class DateTimeExtension
     {
         private const long Era = 62135596800000L;
@@ -17,7 +16,7 @@ namespace Hessian
         /// <returns></returns>
         public static long GetTotalMilliseconds(this DateTime dt)
         {
-            return dt.ToUniversalTime().Ticks / 10000 - Era; 
+            return dt.ToUniversalTime().Ticks / 10000 - Era;
         }
 
         /// <summary>

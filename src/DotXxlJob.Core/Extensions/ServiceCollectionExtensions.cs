@@ -51,7 +51,7 @@ namespace DotXxlJob.Core
             services.AddHttpClient("DotXxlJobClient");
             services.AddSingleton<JobDispatcher>();
             services.AddSingleton<TaskExecutorFactory>();
-            services.AddSingleton<XxlRpcServiceHandler>();
+            services.AddSingleton<XxlRestfulServiceHandler>();
             services.AddSingleton<CallbackTaskQueue>();
             services.AddSingleton<AdminClient>();
             services.AddSingleton<ITaskExecutor, TaskExecutors.BeanTaskExecutor>();

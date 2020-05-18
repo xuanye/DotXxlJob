@@ -3,28 +3,28 @@ using System.Runtime.Serialization;
 namespace DotXxlJob.Core.Model
 {
     
-    [DataContract(Name = Constants.TriggerParamJavaFullName)]
+    [DataContract]
     public class TriggerParam
     {
         //static readonly long SerialVersionUID = 42L;
 
-        [DataMember(Name = "jobId",Order = 1)]
+        [DataMember(Name = "jobId", Order = 1)]
         public int JobId { get; set; }
 
-        [DataMember(Name = "executorHandler",Order = 2)]
+        [DataMember(Name = "executorHandler", Order = 2)]
         public string ExecutorHandler { get; set; }
-        [DataMember(Name = "executorParams",Order = 3)]
+        [DataMember(Name = "executorParams", Order = 3)]
         public string ExecutorParams{ get; set; }
         
-        [DataMember(Name = "executorBlockStrategy",Order = 4)]
+        [DataMember(Name = "executorBlockStrategy", Order = 4)]
         public string ExecutorBlockStrategy{ get; set; }
         
-        [DataMember(Name = "executorTimeout",Order = 5)]
+        [DataMember(Name = "executorTimeout", Order = 5)]
         public int ExecutorTimeout{ get; set; }
         
         [DataMember(Name = "logId",Order = 5)]
         public int LogId{ get; set; }
-        [DataMember(Name = "logDateTim",Order = 6)]
+        [DataMember(Name = "logDateTime", Order = 6)]
         public long LogDateTime{ get; set; }
         
 
@@ -34,7 +34,7 @@ namespace DotXxlJob.Core.Model
         [DataMember(Name = "glueSource",Order = 8)]
         public string GlueSource{ get; set; }
         
-        [DataMember(Name = "glueUpdatetime",Order = 9)]
+        [DataMember(Name = "glueUpdatetime", Order = 9)]
         public long GlueUpdateTime{ get; set; }
 
         [DataMember(Name = "broadcastIndex",Order = 10)]

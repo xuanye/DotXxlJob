@@ -1,10 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<DotXxlJobPackageNotes>
-		1. 修复回调一次过多的问题
-		</DotXxlJobPackageNotes> 
-		<HessianPackageNotes>
-		1. 实现基本的Hessian协议
-		</HessianPackageNotes> 
+		1. 修改接口方式为Restful方式，适配xxl-jobv2.2以上版本
+		</DotXxlJobPackageNotes> 		
 	</PropertyGroup>
 </Project>

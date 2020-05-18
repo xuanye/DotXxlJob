@@ -13,35 +13,26 @@ namespace ASPNetCoreExecutor
         private readonly IServiceProvider _provider;
         private readonly RequestDelegate _next;
 
-        private readonly XxlRpcServiceHandler _rpcService;
+        private readonly XxlRestfulServiceHandler _rpcService;
         public XxlJobExecutorMiddleware(IServiceProvider provider, RequestDelegate next)
         {
             this._provider = provider;
             this._next = next;
-            this._rpcService = _provider.GetRequiredService<XxlRpcServiceHandler>();
+            this._rpcService = _provider.GetRequiredService<XxlRestfulServiceHandler>();
         }
 
 
         public async Task Invoke(HttpContext context)
         {
+            string contentType = context.Request.ContentType;
 
-            if ("POST".Equals(context.Request.Method, StringComparison.OrdinalIgnoreCase) && 
-                "application/octet-stream".Equals(context.Request.ContentType, StringComparison.OrdinalIgnoreCase))
+            if ("POST".Equals(context.Request.Method, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(contentType)
+                && contentType.ToLower().StartsWith("application/json"))
             {
-                /*
-                using (Stream file = File.Create("./"+DateTime.Now.ToUnixTimeSeconds()+".data"))
-                {
-                    context.Request.Body.CopyTo(file);
-                }
-                
-                return;
-                */
-                
-                var rsp =  await _rpcService.HandlerAsync(context.Request.Body);
-
-                context.Response.StatusCode = (int) HttpStatusCode.OK;
-                context.Response.ContentType = "text/plain;utf-8";
-                await context.Response.Body.WriteAsync(rsp,0,rsp.Length);
+            
+                await _rpcService.HandlerAsync(context.Request,context.Response);              
+            
                 return;
             }
             

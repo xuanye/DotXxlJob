@@ -1,5 +1,6 @@
 # DotXxlJob
-xxl-job的dotnet core 执行器实现，支持XXL-JOB 2.0+
+xxl-job的dotnet core 最新执行器实现，支持XXL-JOB 2.2+ 
+> 注意XXL-JOB 2.0-2.2版本请使用 1.0.8的执行器实现
 
 ## 1 XXL-JOB概述
 [XXL-JOB][1]是一个轻量级分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。现已开放源代码并接入多家公司线上产品线，开箱即用。以下是它的架构图
@@ -25,34 +26,37 @@ xxl-job的dotnet core 执行器实现，支持XXL-JOB 2.0+
 1. 声明一个AspNet的Middleware中间件,并扩展ApplicationBuilder，本质是拦截Post请求，解析Body中的流信息
 
 ```
-public class XxlJobExecutorMiddleware
-{
-    private readonly IServiceProvider _provider;
-    private readonly RequestDelegate _next;
-
-    private readonly XxlRpcServiceHandler _rpcService;
-    public XxlJobExecutorMiddleware(IServiceProvider provider, RequestDelegate next)
+ public class XxlJobExecutorMiddleware
     {
-        this._provider = provider;
-        this._next = next;
-        this._rpcService = _provider.GetRequiredService<XxlRpcServiceHandler>();
-    }
+        private readonly IServiceProvider _provider;
+        private readonly RequestDelegate _next;
 
-    public async Task Invoke(HttpContext context)
-    {
-
-        if ("POST".Equals(context.Request.Method, StringComparison.OrdinalIgnoreCase) && 
-            "application/octet-stream".Equals(context.Request.ContentType, StringComparison.OrdinalIgnoreCase))
+        private readonly XxlRestfulServiceHandler _rpcService;
+        public XxlJobExecutorMiddleware(IServiceProvider provider, RequestDelegate next)
         {
-            var rsp =  await _rpcService.HandlerAsync(context.Request.Body);
-            context.Response.StatusCode = (int) HttpStatusCode.OK;
-            context.Response.ContentType = "text/plain;utf-8";
-            await context.Response.Body.WriteAsync(rsp,0,rsp.Length);
-            return;
+            this._provider = provider;
+            this._next = next;
+            this._rpcService = _provider.GetRequiredService<XxlRestfulServiceHandler>();
         }
-        await _next.Invoke(context);
+
+
+        public async Task Invoke(HttpContext context)
+        {
+            string contentType = context.Request.ContentType;
+
+            if ("POST".Equals(context.Request.Method, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(contentType)
+                && contentType.ToLower().StartsWith("application/json"))
+            {
+            
+                await _rpcService.HandlerAsync(context.Request,context.Response);              
+            
+                return;
+            }
+            
+            await _next.Invoke(context);
+        }
     }
-}
 ```
 
 扩展ApplicationBuilderExtensions,可根据实际情况绑定在特殊的Url Path上
@@ -151,12 +155,10 @@ public class DemoJobHandler:AbstractJobHandler
     public int LogRetentionDays { get; set; } = 30;
 }
 ```
-## 在其他Http服务中使用
 
-只需要实现Http请求的拦截，并判断post请求中content-Type="application/octet-stream",并使用XxlRpcServiceHandler来处理流 即可。
 
 ## 其他说明
-XXL-JOB内置的RPC是使用Hessian协议，这个有点坑。很多都是java特有的属性和标识，比如类名什么的。在本项目中，并没有实现完整的Hessian2协议，只实现了使用到的类型，当然扩展起来也非常方便。如果有人要单独使用Hessian 这个类库的话，要特别注意这个问题。
+注意XXL-JOB 2.0-2.2版本请使用 1.0.8的执行器实现
 
 有任何问题，可Issue反馈 ,最后感谢 xxl-job
 

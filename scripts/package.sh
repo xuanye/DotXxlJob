@@ -14,4 +14,4 @@ dotnet restore ./DotXxlJob.sln
 dotnet build ./DotXxlJob.sln -c Release
 
 
-dotnet pack ./src/DotXxlJob.Core/DotXxlJob.Core.csproj -c Release -o ../../$artifactsFolder
+dotnet pack ./src/DotXxlJob.Core/DotXxlJob.Core.csproj -c Release -o $artifactsFolder

@@ -4,7 +4,7 @@ namespace DotXxlJob.Core.Model
 {
     public class AddressEntry
     {
-        public Uri RequestUri { get; set; }
+        public string RequestUri { get; set; }
 
         private DateTime? LastFailedTime { get; set; }
 

@@ -35,7 +35,7 @@ namespace DotXxlJob.Core
             var registryParam = new RegistryParam {
                 RegistryGroup = "EXECUTOR",
                 RegistryKey = _options.AppName,
-                RegistryValue = $"{_options.SpecialBindAddress}:{_options.Port}"
+                RegistryValue = $"http://{_options.SpecialBindAddress}:{_options.Port}/"
             };
 
             _logger.LogInformation(">>>>>>>> start registry to admin <<<<<<<<");
