@@ -23,7 +23,7 @@ namespace DotXxlJob.Core.Model
         public int ExecutorTimeout{ get; set; }
         
         [DataMember(Name = "logId",Order = 5)]
-        public int LogId{ get; set; }
+        public long LogId { get; set; }
         [DataMember(Name = "logDateTime", Order = 6)]
         public long LogDateTime{ get; set; }
         

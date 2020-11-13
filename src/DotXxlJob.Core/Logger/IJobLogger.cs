@@ -6,7 +6,7 @@ namespace DotXxlJob.Core
     public interface IJobLogger
     {
 
-        void SetLogFile(long logTime, int logId);
+        void SetLogFile(long logTime, long logId);
         
         void Log(string pattern, params object[] format);
 
@@ -14,10 +14,10 @@ namespace DotXxlJob.Core
         void LogError(Exception ex);
 
 
-        LogResult ReadLog(long logTime, int logId, int fromLine);
+        LogResult ReadLog(long logTime, long logId, int fromLine);
 
         
-        void LogSpecialFile(long logTime, int logId, string pattern, params object[] format);
+        void LogSpecialFile(long logTime, long logId, string pattern, params object[] format);
 
     }
 }

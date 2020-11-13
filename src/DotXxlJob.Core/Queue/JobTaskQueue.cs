@@ -13,7 +13,7 @@ namespace DotXxlJob.Core
         private readonly IJobLogger _jobLogger;
         private readonly ILogger<JobTaskQueue> _logger;
         private readonly ConcurrentQueue<TriggerParam> TASK_QUEUE = new ConcurrentQueue<TriggerParam>();
-        private readonly ConcurrentDictionary<int, byte> ID_IN_QUEUE = new ConcurrentDictionary<int, byte>();
+        private readonly ConcurrentDictionary<long, byte> ID_IN_QUEUE = new ConcurrentDictionary<long, byte>();
         private CancellationTokenSource _cancellationTokenSource;
         private Task _runTask;
         public JobTaskQueue(ITaskExecutor executor,IJobLogger jobLogger,ILogger<JobTaskQueue> logger)

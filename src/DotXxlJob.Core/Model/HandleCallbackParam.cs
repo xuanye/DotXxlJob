@@ -20,7 +20,7 @@ namespace DotXxlJob.Core.Model
         public int CallbackRetryTimes { get; set; }
         
         [DataMember(Name = "logId",Order = 1)]
-        public int LogId { get; set; }
+        public long LogId { get; set; }
         [DataMember(Name = "logDateTim",Order = 2)]
         public long LogDateTime { get; set; }
         [DataMember(Name = "executeResult",Order = 3)]

@@ -25,7 +25,7 @@ namespace DotXxlJob.Core
             this._options = optionsAccessor.Value;
         }
 
-        public void SetLogFile(long logTime, int logId)
+        public void SetLogFile(long logTime, long logId)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace DotXxlJob.Core
             LogDetail(GetLogFileName(), callInfo, ex.Message + ex.StackTrace);
         }
 
-        public LogResult ReadLog(long logTime, int logId, int fromLine)
+        public LogResult ReadLog(long logTime, long logId, int fromLine)
         {
             var filePath = MakeLogFileName(logTime, logId);
             if (string.IsNullOrEmpty(filePath))
@@ -107,7 +107,7 @@ namespace DotXxlJob.Core
             return logResult;
         }
 
-        public void LogSpecialFile(long logTime, int logId, string pattern, params object[] format)
+        public void LogSpecialFile(long logTime, long logId, string pattern, params object[] format)
         {
             var filePath = MakeLogFileName(logTime, logId);
             var callInfo = new StackTrace(true).GetFrame(1);
@@ -120,7 +120,7 @@ namespace DotXxlJob.Core
         {
             return LogFileName.Value;
         }
-        private string MakeLogFileName(long logDateTime, int logId)
+        private string MakeLogFileName(long logDateTime, long logId)
         {
             //log fileName like: logPath/HandlerLogs/yyyy-MM-dd/9999.log
             return Path.Combine(this._options.LogPath, Constants.HandleLogsDirectory,
