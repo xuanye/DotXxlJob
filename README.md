@@ -158,7 +158,7 @@ public class DemoJobHandler:AbstractJobHandler
 
 
 ## 其他说明
-注意XXL-JOB 2.0-2.2版本请使用 1.0.8的执行器实现
+注意XXL-JOB 2.0.1版本请使用 1.0.8的执行器实现
 
 有任何问题，可Issue反馈 ,最后感谢 xxl-job
 
