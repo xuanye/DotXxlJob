@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace ASPNetCoreExecutor
 {
@@ -27,12 +28,16 @@ namespace ASPNetCoreExecutor
             services.AddSingleton<IJobHandler, DemoJobHandler>(); // 添加自定义的jobHandler
             
             services.AddAutoRegistry(); // 自动注册
+
+
+            //services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true)
+            //    .Configure<IISServerOptions>(x=> x.AllowSynchronousIO = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app,IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName !="Production")
             {
                 app.UseDeveloperExceptionPage();
             }

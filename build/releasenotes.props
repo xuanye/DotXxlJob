@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<DotXxlJobPackageNotes>
-		1. 修正TriggerParam类中logId的类型和admin 不一致的问题
+		1. 修改异步方式读取RequestBody
 		</DotXxlJobPackageNotes> 		
 	</PropertyGroup>
 </Project>

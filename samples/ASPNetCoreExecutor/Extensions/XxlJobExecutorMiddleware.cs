@@ -30,9 +30,9 @@ namespace ASPNetCoreExecutor
                 && !string.IsNullOrEmpty(contentType)
                 && contentType.ToLower().StartsWith("application/json"))
             {
-            
+
                 await _rpcService.HandlerAsync(context.Request,context.Response);              
-            
+
                 return;
             }
             
