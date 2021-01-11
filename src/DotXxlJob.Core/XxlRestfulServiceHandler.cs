@@ -65,7 +65,7 @@ namespace DotXxlJob.Core
             }
             try
             {
-                string json = CollectBody(request.Body);
+                string json = await CollectBody(request.Body);
                 switch (method)
                 {
                     case "beat":
@@ -99,12 +99,12 @@ namespace DotXxlJob.Core
             response.ContentType = "application/json;charset=utf-8";
             await response.WriteAsync(JsonConvert.SerializeObject(ret));           
         }
-        private string CollectBody(Stream body)
+        private async Task<string> CollectBody(Stream body)
         {
             string bodyText;
             using (var reader = new StreamReader(body))
             {
-                bodyText = reader.ReadToEnd();
+                bodyText = await reader.ReadToEndAsync();
             }
             return bodyText;
         }

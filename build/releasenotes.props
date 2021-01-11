@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<DotXxlJobPackageNotes>
-		1. 修改接口方式为Restful方式，适配xxl-jobv2.2以上版本
+		1. 修改异步方式读取RequestBody
 		</DotXxlJobPackageNotes> 		
 	</PropertyGroup>
 </Project>
