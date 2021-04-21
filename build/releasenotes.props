@@ -1,7 +1,8 @@
 <Project>
 	<PropertyGroup>
 		<DotXxlJobPackageNotes>
-		1. 修改异步方式读取RequestBody
+		1. 修改异步方式读取RequestBody 
+		2. 兼容xxl-jobv2.3版本回调函数参数变更的问题
 		</DotXxlJobPackageNotes> 		
 	</PropertyGroup>
 </Project>
