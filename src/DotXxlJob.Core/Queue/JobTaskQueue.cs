@@ -27,8 +27,15 @@ namespace DotXxlJob.Core
 
 
         public event EventHandler<HandleCallbackParam> CallBack;
+
+       
         
        
+        public bool IsRunning()
+        {
+            return _cancellationTokenSource !=null;
+        }
+            
 
        /// <summary>
        /// 覆盖之前的队列

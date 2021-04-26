@@ -10,11 +10,14 @@ namespace ASPNetCoreExecutor
     [JobHandler("demoJobHandler")]
     public class DemoJobHandler:AbstractJobHandler
     {
-        public override Task<ReturnT> Execute(JobExecuteContext context)
-        {
+        public override async Task<ReturnT> Execute(JobExecuteContext context)
+        {            
             context.JobLogger.Log("receive demo job handler,parameter:{0}",context.JobParameter);
-
-            return Task.FromResult(ReturnT.SUCCESS);
+            context.JobLogger.Log("开始休眠120秒");
+            //
+            await Task.Delay(10 * 1000);
+            context.JobLogger.Log("休眠120秒结束");
+            return ReturnT.SUCCESS;
         }
     }
 }

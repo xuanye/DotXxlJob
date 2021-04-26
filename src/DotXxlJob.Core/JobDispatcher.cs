@@ -82,7 +82,12 @@ namespace DotXxlJob.Core
                 //丢弃后续的
                 if (Constants.ExecutorBlockStrategy.DISCARD_LATER == triggerParam.ExecutorBlockStrategy)
                 {
-                     return ReturnT.Failed($"block strategy effect：{triggerParam.ExecutorBlockStrategy}");
+                    //存在还没执行完成的任务
+                    if (taskQueue.IsRunning())
+                    {
+                        return ReturnT.Failed($"block strategy effect：{triggerParam.ExecutorBlockStrategy}");
+                    }
+                    //否则还是继续做
                 }
                 //覆盖较早的
                 if (Constants.ExecutorBlockStrategy.COVER_EARLY == triggerParam.ExecutorBlockStrategy)
@@ -109,7 +114,7 @@ namespace DotXxlJob.Core
         }
 
         private void TriggerCallback(object sender, HandleCallbackParam callbackParam)
-        {
+        {           
             this._callbackTaskQueue.Push(callbackParam);
         }
       

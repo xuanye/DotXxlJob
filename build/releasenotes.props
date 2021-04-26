@@ -3,6 +3,7 @@
 		<DotXxlJobPackageNotes>
 		1. 修改异步方式读取RequestBody 
 		2. 兼容xxl-jobv2.3版本回调函数参数变更的问题
+		3. 修复阻塞处理策略设置为“丢弃后续调度“，只有第一次调度正常执行，后面的所有调度都被丢弃了的问题
 		</DotXxlJobPackageNotes> 		
 	</PropertyGroup>
 </Project>
