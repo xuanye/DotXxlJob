@@ -13,10 +13,9 @@ namespace ASPNetCoreExecutor
         public override async Task<ReturnT> Execute(JobExecuteContext context)
         {            
             context.JobLogger.Log("receive demo job handler,parameter:{0}",context.JobParameter);
-            context.JobLogger.Log("开始休眠120秒");
-            //
+            context.JobLogger.Log("开始休眠10秒"); 
             await Task.Delay(10 * 1000);
-            context.JobLogger.Log("休眠120秒结束");
+            context.JobLogger.Log("休眠10秒结束");
             return ReturnT.SUCCESS;
         }
     }
