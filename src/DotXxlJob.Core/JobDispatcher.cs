@@ -82,7 +82,11 @@ namespace DotXxlJob.Core
                 //丢弃后续的
                 if (Constants.ExecutorBlockStrategy.DISCARD_LATER == triggerParam.ExecutorBlockStrategy)
                 {
-                     return ReturnT.Failed($"block strategy effect：{triggerParam.ExecutorBlockStrategy}");
+                    if (taskQueue.IsRunning())
+                    {
+                        return ReturnT.Failed($"block strategy effect：{triggerParam.ExecutorBlockStrategy}");
+                    }
+                    
                 }
                 //覆盖较早的
                 if (Constants.ExecutorBlockStrategy.COVER_EARLY == triggerParam.ExecutorBlockStrategy)

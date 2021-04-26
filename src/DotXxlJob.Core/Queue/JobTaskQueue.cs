@@ -27,15 +27,18 @@ namespace DotXxlJob.Core
 
 
         public event EventHandler<HandleCallbackParam> CallBack;
-        
-       
 
-       /// <summary>
-       /// 覆盖之前的队列
-       /// </summary>
-       /// <param name="triggerParam"></param>
-       /// <returns></returns>
-       public ReturnT Replace(TriggerParam triggerParam)
+
+        public bool IsRunning()
+        {
+            return _cancellationTokenSource != null;
+        }
+        /// <summary>
+        /// 覆盖之前的队列
+        /// </summary>
+        /// <param name="triggerParam"></param>
+        /// <returns></returns>
+        public ReturnT Replace(TriggerParam triggerParam)
        {
             Stop();
             while (!TASK_QUEUE.IsEmpty)
@@ -151,5 +154,7 @@ namespace DotXxlJob.Core
            
           
        }
+
+       
     }
 }
