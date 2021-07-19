@@ -17,7 +17,13 @@ namespace DotXxlJob.Core.Config
         /// </summary>
         public string AppName { get; set; } = "xxl-job-executor-dotnet";
 
-     
+
+
+        /// <summary>
+        /// 绑定的特殊的URL，如果该项配置存在，则忽略SpecialBindAddress和Port
+        /// </summary>
+        public string SpecialBindUrl { get; set; }
+
         /// <summary>
         /// 自动注册时提交的地址，为空会自动获取内网地址
         /// </summary>
