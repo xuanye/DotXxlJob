@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DotXxlJob.Core.DefaultHandlers;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace DotXxlJob.Core.Tests
 {
-    public class BeanTaskExecutorTest
+  public class BeanTaskExecutorTest
     {
         [Fact]
         public async Task Repeated_Job_Handler()
@@ -21,7 +19,7 @@ namespace DotXxlJob.Core.Tests
 
             var list = new List<object>();
 
-            services.AddJobHandler<TestJobHandler>("test", list);
+            services.AddJobHandler<TestJobHandler>("test", x => ActivatorUtilities.CreateInstance<TestJobHandler>(x, list));
 
             using (var provider = services.BuildServiceProvider(true))
             {

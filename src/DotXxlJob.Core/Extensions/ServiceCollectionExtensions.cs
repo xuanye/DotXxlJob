@@ -56,33 +56,45 @@ namespace DotXxlJob.Core
         }
 
         /// <summary>允许创建Scoped实例</summary>
-        /// <typeparam name="TJob"></typeparam>
-        /// <param name="services"></param>
-        /// <param name="constructorParameters">用于创建实例的额外参数，比如字符串</param>
-        /// <returns></returns>
-        public static IServiceCollection AddJobHandler<TJob>(this IServiceCollection services,
-            params object[] constructorParameters) where TJob : IJobHandler
+        public static IServiceCollection AddJobHandler<TJob>(this IServiceCollection services)
+            where TJob : class, IJobHandler
         {
-            services.GetJobHandlerCache().AddJobHandler<TJob>(constructorParameters);
+            services.GetJobHandlerCache().AddJobHandler<TJob>();
 
-            return services;
+            return services.AddScoped<TJob>();
         }
 
         /// <summary>允许创建Scoped实例</summary>
-        /// <typeparam name="TJob"></typeparam>
-        /// <param name="services"></param>
-        /// <param name="handlerName"></param>
-        /// <param name="constructorParameters">用于创建实例的额外参数，比如字符串</param>
-        /// <returns></returns>
         public static IServiceCollection AddJobHandler<TJob>(this IServiceCollection services,
-            string handlerName, params object[] constructorParameters) where TJob : IJobHandler
+            Func<IServiceProvider, TJob> implementationFactory)
+            where TJob : class, IJobHandler
         {
-            services.GetJobHandlerCache().AddJobHandler<TJob>(handlerName, constructorParameters);
+            services.GetJobHandlerCache().AddJobHandler<TJob>();
 
-            return services;
+            return services.AddScoped(implementationFactory);
         }
 
-        private static JobHandlerCache GetJobHandlerCache(this IServiceCollection services)
+        /// <summary>允许创建Scoped实例</summary>
+        public static IServiceCollection AddJobHandler<TJob>(this IServiceCollection services,
+            string handlerName)
+            where TJob : class, IJobHandler
+        {
+            services.GetJobHandlerCache().AddJobHandler<TJob>(handlerName);
+
+            return services.AddScoped<TJob>();
+    }
+
+        /// <summary>允许创建Scoped实例</summary>
+        public static IServiceCollection AddJobHandler<TJob>(this IServiceCollection services,
+            string handlerName, Func<IServiceProvider, TJob> implementationFactory)
+            where TJob : class, IJobHandler
+        {
+            services.GetJobHandlerCache().AddJobHandler<TJob>(handlerName);
+
+            return services.AddScoped(implementationFactory);
+        }
+
+    private static JobHandlerCache GetJobHandlerCache(this IServiceCollection services)
         {
             var sd = services.FirstOrDefault(x => x.ImplementationInstance is JobHandlerCache);
             if (sd != null) return (JobHandlerCache)sd.ImplementationInstance;

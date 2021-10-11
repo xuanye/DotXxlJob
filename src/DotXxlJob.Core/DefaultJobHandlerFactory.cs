@@ -1,10 +1,9 @@
 using System;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotXxlJob.Core
 {
-  public class DefaultJobHandlerFactory : IJobHandlerFactory
+    public class DefaultJobHandlerFactory : IJobHandlerFactory
     {
         private readonly JobHandlerCache _handlerCache;
 
@@ -22,7 +21,7 @@ namespace DotXxlJob.Core
                 _handlerCache.AddJobHandler(handler);
             }
 
-            if (_handlerCache.HandlersCache.Count < 1)
+            if (_handlerCache.IsEmpty)
             {
                 throw new TypeLoadException("IJobHandlers are not found in IServiceCollection");
             }
@@ -40,7 +39,7 @@ namespace DotXxlJob.Core
 
             serviceScope = scopeFactory.CreateScope();
 
-            return (IJobHandler)ActivatorUtilities.CreateInstance(serviceScope.ServiceProvider, jobHandler.JobHandlerType, jobHandler.JobHandlerConstructorParameters);
+            return (IJobHandler)serviceScope.ServiceProvider.GetRequiredService(jobHandler.JobHandlerType);
         }
     }
 }

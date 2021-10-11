@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using DotXxlJob.Core.DefaultHandlers;
 
 namespace DotXxlJob.Core
 {
     public class JobHandlerCache
     {
-        internal Dictionary<string, JobHandlerItem> HandlersCache { get; } = new Dictionary<string, JobHandlerItem>();
+        private readonly Dictionary<string, JobHandlerItem> _handlersCache  = new Dictionary<string, JobHandlerItem>();
 
-        public void AddJobHandler<TJob>(params object[] constructorParameters)
-            where TJob : IJobHandler =>
+        public bool IsEmpty => _handlersCache.Count < 1;
+
+        public void AddJobHandler<TJob>() where TJob : IJobHandler =>
             AddJobHandler<TJob>(typeof(TJob).GetCustomAttribute<JobHandlerAttribute>()?.Name ??
-                                typeof(TJob).Name, constructorParameters);
+                                typeof(TJob).Name);
 
-        public void AddJobHandler<TJob>(string handlerName, params object[] constructorParameters)
-            where TJob : IJobHandler =>
-            AddJobHandler(handlerName, new JobHandlerItem {
-                JobHandlerType = typeof(TJob),
-                JobHandlerConstructorParameters = constructorParameters,
-            });
+        public void AddJobHandler<TJob>(string handlerName) where TJob : IJobHandler =>
+            AddJobHandler(handlerName, new JobHandlerItem { JobHandlerType = typeof(TJob) });
 
         public void AddJobHandler(IJobHandler jobHandler)
         {
@@ -39,24 +34,22 @@ namespace DotXxlJob.Core
 
         private void AddJobHandler(string handlerName, JobHandlerItem jobHandler)
         {
-            if (HandlersCache.ContainsKey(handlerName))
+            if (_handlersCache.ContainsKey(handlerName))
             {
                 throw new ArgumentException($"Same IJobHandler' name: [{handlerName}]", nameof(handlerName));
             }
 
-            HandlersCache.Add(handlerName, jobHandler);
+            _handlersCache.Add(handlerName, jobHandler);
         }
 
         public JobHandlerItem Get(string handlerName) =>
-            HandlersCache.TryGetValue(handlerName, out var item) ? item : null;
+            _handlersCache.TryGetValue(handlerName, out var item) ? item : null;
 
         public class JobHandlerItem
         {
             public IJobHandler JobHandler { get; set; }
 
             public Type JobHandlerType { get; set; }
-
-            public object[] JobHandlerConstructorParameters { get; set; }
         }
     }
 }
