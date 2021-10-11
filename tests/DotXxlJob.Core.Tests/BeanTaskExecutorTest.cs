@@ -6,7 +6,7 @@ using Xunit;
 
 namespace DotXxlJob.Core.Tests
 {
-  public class BeanTaskExecutorTest
+    public class BeanTaskExecutorTest
     {
         [Fact]
         public async Task Repeated_Job_Handler()

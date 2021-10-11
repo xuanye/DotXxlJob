@@ -50,7 +50,6 @@ namespace DotXxlJob.Core
             services.AddSingleton<CallbackTaskQueue>();
             services.AddSingleton<AdminClient>();
             services.AddSingleton<ITaskExecutor, TaskExecutors.BeanTaskExecutor>();
-            services.AddSingleton(new JobHandlerCache());
 
             return services;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotXxlJob.Core.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +6,7 @@ using Xunit;
 
 namespace DotXxlJob.Core.Tests
 {
-    public class DefaultJobHandlerFactory
+  public class DefaultJobHandlerFactory
     {
         [Fact]
         public async Task Repeated_Job_Handler()
