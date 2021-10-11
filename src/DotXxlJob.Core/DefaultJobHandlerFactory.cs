@@ -1,49 +1,46 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotXxlJob.Core
 {
-    public class DefaultJobHandlerFactory:IJobHandlerFactory
+  public class DefaultJobHandlerFactory : IJobHandlerFactory
     {
-        private readonly IServiceProvider _provider;
-        private readonly Dictionary<string, IJobHandler> handlersCache = new Dictionary<string, IJobHandler>();
-        public DefaultJobHandlerFactory(IServiceProvider provider)
+        private readonly JobHandlerCache _handlerCache;
+
+        public DefaultJobHandlerFactory(IServiceProvider provider, JobHandlerCache handlerCache = null)
         {
-            this._provider = provider;
-            Initialize();
+            _handlerCache = handlerCache ?? new JobHandlerCache();
+
+            Initialize(provider);
         }
 
-        private void Initialize()
+        private void Initialize(IServiceProvider provider)
         {
-            var list = this._provider.GetServices<IJobHandler>();
-            if (list == null || !list.Any())
+            foreach (var handler in provider.GetServices<IJobHandler>())
+            {
+                _handlerCache.AddJobHandler(handler);
+            }
+
+            if (_handlerCache.HandlersCache.Count < 1)
             {
                 throw new TypeLoadException("IJobHandlers are not found in IServiceCollection");
             }
-
-            foreach (var handler in list)
-            {
-                var jobHandlerAttr = handler.GetType().GetCustomAttribute<JobHandlerAttribute>();
-                var handlerName = jobHandlerAttr == null ? handler.GetType().Name : jobHandlerAttr.Name;
-                if (handlersCache.ContainsKey(handlerName))
-                {
-                    throw  new Exception($"same IJobHandler' name: [{handlerName}]");
-                }
-                handlersCache.Add(handlerName,handler);
-            }
-           
         }
 
-        public IJobHandler GetJobHandler(string handlerName)
+        public IJobHandler GetJobHandler(IServiceScopeFactory scopeFactory, string handlerName, out IServiceScope serviceScope)
         {
-            if (handlersCache.ContainsKey(handlerName))
-            {
-               return handlersCache[handlerName];
-            }
-            return null;
+            serviceScope = null;
+
+            var jobHandler = _handlerCache.Get(handlerName);
+
+            if (jobHandler == null) return null;
+
+            if (jobHandler.JobHandler != null) return jobHandler.JobHandler;
+
+            serviceScope = scopeFactory.CreateScope();
+
+            return (IJobHandler)ActivatorUtilities.CreateInstance(serviceScope.ServiceProvider, jobHandler.JobHandlerType, jobHandler.JobHandlerConstructorParameters);
         }
     }
 }

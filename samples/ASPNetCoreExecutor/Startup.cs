@@ -16,17 +16,17 @@ namespace ASPNetCoreExecutor
         }
 
         private IConfiguration Configuration { get; }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-          
+
             services.AddXxlJobExecutor(Configuration);
             services.AddDefaultXxlJobHandlers();// add httpHandler;
 
-            services.AddSingleton<IJobHandler, DemoJobHandler>(); // 添加自定义的jobHandler
-            
+            services.AddJobHandler<DemoJobHandler>(); // 添加自定义的jobHandler
+
             services.AddAutoRegistry(); // 自动注册
 
 
