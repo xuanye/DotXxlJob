@@ -28,11 +28,7 @@ namespace DotXxlJob.Core.TaskExecutors
 
             if (scope == null) return await Execute(handler, triggerParam);
 
-            using (scope)
-            using (handler)
-            {
-                return await Execute(handler, triggerParam);
-            }
+            using (scope) return await Execute(handler, triggerParam);
         }
 
         private Task<ReturnT> Execute(IJobHandler handler, TriggerParam triggerParam)
