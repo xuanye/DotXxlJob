@@ -97,7 +97,7 @@ namespace DotXxlJob.Core
                 ret = ReturnT.Failed($"method {method}  is not impl");
             }
             response.ContentType = "application/json;charset=utf-8";
-            await response.WriteAsync(JsonConvert.SerializeObject(ret));           
+            await response.WriteAsync(JsonConvert.SerializeObject(ret, new JsonSerializerSettings() { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii }));           
         }
         private async Task<string> CollectBody(Stream body)
         {
