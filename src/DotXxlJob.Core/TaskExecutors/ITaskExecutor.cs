@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using DotXxlJob.Core.Model;
 
@@ -7,6 +8,6 @@ namespace DotXxlJob.Core
     {
         string GlueType { get; }
 
-        Task<ReturnT> Execute(TriggerParam triggerParam);
+        Task<ReturnT> Execute(TriggerParam triggerParam, CancellationToken cancellationToken);
     }
 }
