@@ -129,11 +129,19 @@ namespace DotXxlJob.Core
                             _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}", triggerParam.ExecutorParams);
 
                             var exectorToken = ct;
+                            CancellationTokenSource timeoutCts = null;
                             if (triggerParam.ExecutorTimeout > 0)
                             {
-                                exectorToken = CancellationTokenSource.CreateLinkedTokenSource(exectorToken, new CancellationTokenSource(triggerParam.ExecutorTimeout * 1000).Token).Token;
+                                timeoutCts = new CancellationTokenSource(triggerParam.ExecutorTimeout * 1000);
+                                exectorToken = CancellationTokenSource.CreateLinkedTokenSource(exectorToken, timeoutCts.Token).Token;
                             }
                             result = await Executor.Execute(triggerParam, exectorToken);
+                            if(timeoutCts != null && timeoutCts.IsCancellationRequested)
+                            {
+                                result = ReturnT.FAIL_TIMEOUT;
+                                timeoutCts.Dispose();
+                                timeoutCts = null;
+                            }
 
                             _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
                         }
