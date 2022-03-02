@@ -128,7 +128,12 @@ namespace DotXxlJob.Core
 
                             _jobLogger.Log("<br>----------- xxl-job job execute start -----------<br>----------- Param:{0}", triggerParam.ExecutorParams);
 
-                            result = await Executor.Execute(triggerParam, ct);
+                            var exectorToken = ct;
+                            if (triggerParam.ExecutorTimeout > 0)
+                            {
+                                exectorToken = CancellationTokenSource.CreateLinkedTokenSource(exectorToken, new CancellationTokenSource(triggerParam.ExecutorTimeout * 1000).Token).Token;
+                            }
+                            result = await Executor.Execute(triggerParam, exectorToken);
 
                             _jobLogger.Log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + result.Code);
                         }
