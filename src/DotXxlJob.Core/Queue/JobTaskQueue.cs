@@ -138,7 +138,7 @@ namespace DotXxlJob.Core
                             result = await Executor.Execute(triggerParam, exectorToken);
                             if(timeoutCts != null && timeoutCts.IsCancellationRequested)
                             {
-                                result = ReturnT.FAIL_TIMEOUT;
+                                result = new ReturnT(502, result.Msg);
                                 timeoutCts.Dispose();
                                 timeoutCts = null;
                             }
