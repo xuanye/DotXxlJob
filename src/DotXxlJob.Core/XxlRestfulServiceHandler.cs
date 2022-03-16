@@ -71,7 +71,7 @@ namespace DotXxlJob.Core
                     case "beat":
                         ret = Beat();
                         break;
-                    case "idleBeat":
+                    case "idlebeat":
                         ret = IdleBeat(JsonConvert.DeserializeObject<IdleBeatRequest>(json));
                         break;
                     case "run":
