@@ -106,7 +106,7 @@ namespace DotXxlJob.Core
             {
                 bodyText = await reader.ReadToEndAsync();
             }
-            return bodyText;
+            return bodyText??string.Emppty;
         }
 
         #region rpc service
