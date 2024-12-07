@@ -1,34 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../build/version.props" />
-  <Import Project="../../build/releasenotes.props" />
-    <PropertyGroup>
-      <TargetFramework>netstandard2.0</TargetFramework>
-      <DefineConstants>$(DefineConstants);DOTNETCORE</DefineConstants>
-      <Description>XxlJobExecutor DotNet port</Description>
-      <Copyright>Xuanye @ 2019</Copyright>
-      <Authors>Xuanye</Authors>
-      <AssemblyTitle>XxlJobExecutor DotNet port</AssemblyTitle>
-      <AssemblyName>DotXxlJob.Core</AssemblyName>
-      <PackageId>DotXxlJob.Core</PackageId>
-      <Version>$(DotXxlJobPackageVersion)</Version>
-      <PackageTags>Hession,xxl-job,DotXxlJob</PackageTags>
-      <PackageReleaseNotes>
-       $(DotXxlJobPackageNotes)
-      </PackageReleaseNotes>
-      <PackageProjectUrl>https://github.com/xuanye/DotXxlJob</PackageProjectUrl>
-      <PackageLicense>https://github.com/xuanye/DotXxlJob/blob/master/LICENSE</PackageLicense>
-      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-      <RepositoryType>git</RepositoryType>
-      <RepositoryUrl>https://github.com/xuanye/DotXxlJob</RepositoryUrl>
-    </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Flurl.Http" Version="2.4.2" />
-      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
-      <PackageReference Include="Utf8Json" Version="1.3.7" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
 </Project>

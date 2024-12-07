@@ -8,11 +8,9 @@
 *.PDF	diff=astextplain
 *.rtf	diff=astextplain
 *.RTF	diff=astextplain
-
 *.jpg  	binary
 *.png 	binary
 *.gif 	binary
-
 *.cs text=auto diff=csharp 
 *.vb text=auto
 *.resx text=auto
@@ -42,8 +40,6 @@
 *.fs text=auto
 *.fsx text=auto
 *.hs text=auto
-*.txt eol=crlf
-
 *.csproj text=auto
 *.vbproj text=auto
 *.fsproj text=auto
