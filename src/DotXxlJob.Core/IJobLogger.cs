@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Xuanye Wang. All rights reserved.
 // Licensed under MIT license
 
+using System.Threading.Tasks;
+
 namespace DotXxlJob.Core
 {
-    public interface ICommandExecutorFactory
+    public interface IJobLogger
     {
-        ICommandExecutor? GetCommandExecutor(string commandName);
+        Task LogAsync(string message);
     }
 }

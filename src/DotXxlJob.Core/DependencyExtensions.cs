@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xuanye Wong. All rights reserved.
+﻿// Copyright (c) Xuanye Wang. All rights reserved.
 // Licensed under MIT license
 
 namespace DotXxlJob.Core

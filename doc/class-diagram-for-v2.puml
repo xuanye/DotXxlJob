@@ -1,0 +1,123 @@
+@startuml XxlJob.Core Class Diagram
+title XxlJob.Core Class Diagram
+
+class XxlRestfulServiceHandler {
+    - JobDispatcher _jobDispatcher
+    - IJobLogger _jobLogger
+    + HandleAync(HttpContext context)
+}
+
+
+
+interface IJobLogger {
+    + SetLogFile(long logTime, long logId)
+    + Log(string pattern, params object[] format)
+    + LogError(Exception ex)
+    + ReadLog(long logTime, long logId, int fromLine)
+    + LogSpecialFile()
+}
+
+
+class JobDispatcher {
+    - TaskExecutorFactory _executorFactory
+    - CallbackQueue _callbackTaskQueue
+    - ConcurrentDictionary<int, JobTaskQueue> RUNNING_QUEUE
+
+    + TryRemoveJobTask(int jobId)
+    + Execute(TriggerParam triggerParam)
+    + IdleBeat(int jobId)
+}
+
+class TaskExecutorFactory {
+    - Dictionary<string, ITaskExecutor> _cache
+    + GetTaskExecutor(string glueType)
+}
+
+class CallbackQueue {
+    - AdminClient _adminClient
+    - IJobLogger _jobLogger
+    - RetryCallbackTaskQueue _retryQueue
+    - ConcurrentQueue<HandleCallbackParam> taskQueue
+
+    + Push(HandleCallbackParam callbackParam)
+    + Dispose()
+}
+
+class RetryCallbackTaskQueue {}
+
+class AdminClient {
+}
+
+
+class JobTaskQueue {
+    - ConcurrentQueue<TriggerParam> TASK_QUEUE
+    - ConcurrentDictionary<long, byte> ID_IN_QUEUE
+    + EventHandler<HandleCallbackParam> CallBack
+
+    + IsRunning()
+    + Replace(TriggerParam triggerParam)
+    + Push(TriggerParam triggerParam)
+    + Stop()
+    + Dispose()
+}
+
+interface ITaskExecutor {
+    + Execute(TriggerParam triggerParam)
+}
+
+class BeanTaskExecutor {
+    - IJobHandlerFactory _handlerFactory
+    - IJobLogger _jobLogger
+}
+
+class TriggerParam {}
+
+class HandleCallbackParam {}
+
+interface IJobHandlerFactory {}
+
+class JobHandlerFactory {
+    + GetJobHandler(string handlerName)
+}
+
+
+interface IJobHandler {
+    + Execute(JobExecuteContext context)
+}
+
+abstract class AbstractJobHandler {}
+
+
+class JobExecuteContext {
+    + string JobParameter
+    + IJobLogger JobLogger
+    + CancellationToken cancellationToken
+}
+
+class JobHandlerAttribute {}
+
+note  "用于标记JobHandler的名字" as N1
+
+XxlRestfulServiceHandler -right-> JobDispatcher
+XxlRestfulServiceHandler --> IJobLogger
+
+JobDispatcher --> TaskExecutorFactory
+JobDispatcher --> CallbackQueue
+JobDispatcher --> JobTaskQueue
+
+TaskExecutorFactory *-- ITaskExecutor
+BeanTaskExecutor -up-|> ITaskExecutor
+
+CallbackQueue --> IJobLogger
+CallbackQueue --> RetryCallbackTaskQueue
+CallbackQueue --> AdminClient
+CallbackQueue --> HandleCallbackParam
+
+BeanTaskExecutor --> IJobHandlerFactory
+JobHandlerFactory -right-|> IJobHandlerFactory
+JobHandlerFactory *-left- IJobHandler
+
+AbstractJobHandler -right-|> IJobHandler
+
+N1 .. JobHandlerAttribute
+@enduml

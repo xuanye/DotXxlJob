@@ -3,8 +3,9 @@
 
 namespace DotXxlJob.Core
 {
-    public interface ICommandExecutorFactory
+    public interface IJobExecutorFactory
     {
-        ICommandExecutor? GetCommandExecutor(string commandName);
+        IJobExecutor? GetJobExecutor(string glueType);
     }
+
 }

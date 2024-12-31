@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xuanye Wong. All rights reserved.
+﻿// Copyright (c) Xuanye Wang. All rights reserved.
 // Licensed under MIT license
 
 using System;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DotXxlJob.Core.Internal
 {
-    public class TextJsonSerializer:ISerializer
+    public class TextJsonSerializer : ISerializer
     {
         public T? Deserialize<T>(byte[] data) where T : class
         {
@@ -26,14 +26,14 @@ namespace DotXxlJob.Core.Internal
         public object? Deserialize(byte[] data, Type type)
         {
             var json = Encoding.UTF8.GetString(data);
-            return JsonSerializer.Deserialize(json,type);
+            return JsonSerializer.Deserialize(json, type);
         }
 
-        public byte[] Serialize(object item,Type type)
+        public byte[] Serialize(object item, Type type)
         {
-            return JsonSerializer.SerializeToUtf8Bytes(item);           
+            return JsonSerializer.SerializeToUtf8Bytes(item);
         }
 
-       
+
     }
 }

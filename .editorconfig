@@ -4,7 +4,7 @@
 # You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 [*.cs]
 
-file_header_template = Copyright (c) Xuanye Wong. All rights reserved.\nLicensed under MIT license
+file_header_template = Copyright (c) Xuanye Wang. All rights reserved.\nLicensed under MIT license
 dotnet_diagnostic.IDE0073.severity = warning
 #Core editorconfig formatting - indentation
 
@@ -20,8 +20,8 @@ csharp_new_line_before_open_brace = all
 
 #Formatting - organize using options
 
-#do not place System.* using directives before other using directives
-dotnet_sort_system_directives_first = false
+#do place System.* using directives before other using directives
+dotnet_sort_system_directives_first = true
 
 #Formatting - spacing options
 

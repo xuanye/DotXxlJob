@@ -1,0 +1,127 @@
+@startuml XxlJob.Core - Class Diagram
+
+title XxlJob.Core - Class Diagram
+
+
+class XxlJobHttpHandler{
+  + HandleAsync(HttpContext context)
+}
+
+interface ICommandExecutorFactory{
+  + GetCommandExecutor(string commandName)
+}
+
+class CommandExecutorFactory{}
+
+interface ICommandExecutor{
+  + string CommandName
+  + ExecuteAsync(byte[] payload)
+}
+class BeatCommandExecutor{}
+class IdleBeatCommandExecutor{}
+class TiggerCommandExecutor{}
+class AbortCommandExecutor{}
+
+
+interface IJobDispatcher{
+  + StartAsync()
+  + StopAsync()
+  + DisposeAsync()
+  
+  + TiggerJobAsync(Job job)
+  + ReplaceJobAsync(Job job)
+  + AbortJobAsync(int jobId)
+}
+class JobDispatcher{
+  - JobQueue _jobQueue
+  - CallQueue _callbackQueue
+}
+
+interface IJobExecutorFactory{
+  + GetTaskExecutor(string glueType)
+}
+class JobExecutorFactory{
+}
+interface IJobExecutor{
+  + string GlueType
+  + ExecuteAsync(Job job)
+}
+
+class BeanJobExecutor{
+}
+
+
+interface IJobHandlerFactory{
+  + GetJobHandler(string handlerName)
+}
+
+class JobHandlerFactory{
+
+}
+
+interface IJobHandler{
+  + string Name
+  + HandleAsync(JobContext context)
+}
+
+class JobWorker{
+  - Queue _jobQueue
+ 
+  + DisposeAsync()
+
+  + Event OnJobCompleted
+  
+  + EnqueueTaskAsync(JobTask task)
+  + ReplaceJobAsync(Job job)
+  + AbortJobAsync(JobId jobId)
+
+}
+class JobExecuteResult{}
+class CallBackWorker{
+  - Queue _callbackQueue
+ 
+  + DisposeAsync()
+  
+  + EnqueueAsync(JobExecuteResult result)
+}
+
+interface IAdminClient{}
+
+XxlJobHttpHandler ..> ICommandExecutorFactory
+
+CommandExecutorFactory -up-|> ICommandExecutorFactory
+
+BeatCommandExecutor -up-|> ICommandExecutor
+IdleBeatCommandExecutor -up-|> ICommandExecutor
+TiggerCommandExecutor -up-|> ICommandExecutor
+AbortCommandExecutor -up-|> ICommandExecutor
+
+ICommandExecutor .up.* CommandExecutorFactory
+
+BeanJobExecutor -right-|> IJobExecutor
+
+IJobExecutor .right.* JobExecutorFactory
+
+JobDispatcher -up-|> IJobDispatcher
+
+JobDispatcher ..> JobWorker
+JobDispatcher ..> CallBackWorker
+
+
+JobWorker  ..> IJobExecutorFactory
+CallBackWorker  ..> IAdminClient
+
+JobExecutorFactory -up-|> IJobExecutorFactory
+
+
+BeatCommandExecutor ..> IJobDispatcher
+IdleBeatCommandExecutor ..> IJobDispatcher
+TiggerCommandExecutor ..> IJobDispatcher
+AbortCommandExecutor ..> IJobDispatcher
+
+BeanJobExecutor ..> IJobHandlerFactory
+JobHandlerFactory -up-|> IJobHandlerFactory
+IJobHandler ..* JobHandlerFactory
+
+
+@enduml

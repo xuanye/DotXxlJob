@@ -1,13 +1,12 @@
-﻿// Copyright (c) Xuanye Wong. All rights reserved.
+﻿// Copyright (c) Xuanye Wang. All rights reserved.
 // Licensed under MIT license
 
 using DotXxlJob.Core.Models;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotXxlJob.Core.CommandExecutors
 {
-    public class IdleBeatCommandExecutor:ICommandExecutor
+    public class IdleBeatCommandExecutor : ICommandExecutor
     {
         private readonly ISerializer _serializer;
 
@@ -16,13 +15,13 @@ namespace DotXxlJob.Core.CommandExecutors
             _serializer = serializer;
         }
         public string CommandName => "IdleBeat";
-        
-        public Task<ExecutorResult> ExecuteAsync(byte[] payload,CancellationToken cancellationToken = default)
+
+        public Task<ApiResult> ExecuteAsync(byte[] payload)
         {
             var idleBeat = _serializer.Deserialize<IdleBeatCommand>(payload);
             if (idleBeat == null)
             {
-                return Task.FromResult(ExecutorResult.Failure("Command[IdleBrat],parameter is empty"));
+                return Task.FromResult(ApiResult.Failure("Command[IdleBrat],parameter is empty"));
             }
             throw new System.NotImplementedException();
         }

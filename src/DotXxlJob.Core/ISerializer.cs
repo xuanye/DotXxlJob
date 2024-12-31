@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xuanye Wong. All rights reserved.
+﻿// Copyright (c) Xuanye Wang. All rights reserved.
 // Licensed under MIT license
 
 using System;
@@ -12,7 +12,7 @@ namespace DotXxlJob.Core
     {
         T? Deserialize<T>(byte[] data) where T : class;
         byte[] Serialize<T>(T item) where T : class;
-        object? Deserialize(byte[] data,Type type);
-        byte[] Serialize(object item,Type type);
+        object? Deserialize(byte[] data, Type type);
+        byte[] Serialize(object item, Type type);
     }
 }
